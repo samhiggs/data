@@ -1,8 +1,8 @@
 ---
 title: "Reproducible Report Template - Basic"
 author: "Student/s SID"
-subtitle: "Project X"
-date: "University of Sydney | Unit of Study | MONTH YEAR"
+subtitle: "Project 1"
+date: "University of Sydney | Data1001 | August 2018"
 # You can change the title, subtitle, author etc.
 # if you do not want a subtitle, author, or date just delete or comment # the the line!
 output:
@@ -32,7 +32,7 @@ output:
 <br>
 
 # Executive Summary
-- The aim of this report is to ...
+- The aim of this report is to find out what kind of correlations are between weather and alcohol sales in Sydney.
 - The main discoveries are ...
 
 <br>
@@ -74,8 +74,9 @@ str(mtcars)
 
 Summary:
 
-- The data came from ...
-- The data is/is not valid because ...
+- The data came from two different sources. The weather data came in two different data sets from the [Bureau of Meteorology] (http://www.bom.gov.au/climate/data/) website and the sale data of alcoholic beverages came from a local store in Sydney. We are using data from both resources and combining the into one big dataset. a
+- The data is/is not valid because 
+  The data is valid because we are getting 
 - Possible issues include ...
 - Each row represents ...
 - Each column represents ...
@@ -84,17 +85,26 @@ Summary:
 
 ## Research Question 1
 
+How Does temperature affect the consumer decision when purchasing alcohol?
+
 Insert text and analysis. 
 
 Summary: 
 
 ## Research Question 2
 
+How does rainfall affect the consumer decision when purchasing alcohol?
+
 Insert text and analysis. 
 
 Summary: 
 
 ## Research Question 3
+
+What does the time of year affect the consumer decision when purchasing alcohol?
+
+Other possible research questions: 
+What time of day do people buy their alcohol?
 
 Insert text and analysis. 
 
