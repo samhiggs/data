@@ -52,6 +52,7 @@ In the rmd file, you will see how you can load your own dataset from either 1) a
 ```{r}
 # LOAD DATA
 library(ggplot2)
+library(tidyr)
 data = read.csv("~/Desktop/usyd-2018-b/data1001/project1/data/data/ProcessedData.csv")
 
 # Quick look at top 5 rows of data
@@ -84,9 +85,8 @@ Summary:
 
 How does the maximum temperature affect the consumer decision when purcahsing alcohol?
 
-Looking at the values of the median and mean purchase transactions we see that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definate drop in amount of money spent per purchase. During the very hottest periods 40-45 degrees there is also a massive drop in amount spent on each transaction. However it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occured at the 35-40 temperature range. This could be because people drink more alcohol, however these would be regular temperatures during Christamas time when people are on vacation and drink more alcohol in general.
-
 ```{r}
+#The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
 temp = data$Maximum.temperature..Degree.C.
 data$tempGroups = cut(temp, c(10,15,20,25,30,35,40,45))
 
@@ -95,7 +95,7 @@ meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
 medPerPerson = aggregate(data$Total ~ data$tempGroups, data, median)
 transactions = merge(x = meanPerPerson, y = medPerPerson, by='data$tempGroups')
 names(transactions) = c('Temperature', 'Mean_total', 'Median_total')
-transactions
+print(transactions)
 
  ggplot(transactions, aes(Temperature, Mean_total)) + geom_bar(stat="identity", position = "dodge") 
  ggplot(transactions, aes(Temperature, Median_total)) + geom_bar(stat="identity", position = "dodge")
@@ -104,7 +104,7 @@ transactions
  barplot(table(data$tempGroups))
  
  
- #Total money spent for each temoerature range
+ #Total money spent for each temperature range
  totalPerDay = aggregate(data$Total ~ data$tempGroups, data, sum)
  nrOfDaysPerTemp = aggregate(data$Date ~ data$tempGroups, data, function(x) length(unique(x)))
  totals = merge(x = totalPerDay, y = nrOfDaysPerTemp, by='data$tempGroups')
@@ -116,13 +116,52 @@ transactions
 ```
 
 Summary: 
+Looking at the values of the median and mean purchase transactions we see that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definate drop in amount of money spent per purchase. During the very hottest periods 40-45 degrees there is also a massive drop in amount spent on each transaction. However it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occured at the 35-40 temperature range. This could be because people drink more alcohol, however these would be regular temperatures during Christamas time when people are on vacation and drink more alcohol in general.
 
 ## Research Question 2
+How does rainfall affect the consumer decision when purchasing alcohol?
+
+There are a few days for which we do not have rain data so we start by removing those rows. We then take a better look at the rain data Let's start by taking a better look at the rainfall data
 ```{r}
+rainData = data %>% drop_na(Rainfall.amount..millimetres.)
+print(paste('Number of rows with missing values for rainfall: ', nrow(data)-nrow(rainData)))
+rain = rainData$Rainfall.amount..millimetres.
+print(paste('Maximum rainfall', max(rain)))
+print(paste('Minimum rainfall', min(rain)))
+print(paste('Mean rainfall', mean(rain)))
+print(paste('Median rainfall', median(rain)))
+```
+
+```{r}
+#We start by changing the rainfall from a quantitative variable to a qualitative one
+rainData$rainGroups = cut(rain, c(0,5,15,40,70))
+
+#Transaction sizes for each temperature range
+meanPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, rainData, mean)
+medPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, data, median)
+transactions = merge(x = meanPerPerson, y = medPerPerson, by='rainData$rainGroups')
+names(transactions) = c('Rainfall', 'Mean_total', 'Median_total')
+print(transactions)
+
+ ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge") 
+ ggplot(transactions, aes(Rainfall, Median_total)) + geom_bar(stat="identity", position = "dodge")
+
+ #Number of transactions for each rainfall range
+ barplot(table(rainData$rainGroups))
+ 
+ 
+ #Total money spent for each temperature range
+ totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
+ nrOfDaysPerRain = aggregate(rainData$Date ~ rainData$rainGroups, rainData, function(x) length(unique(x)))
+ totals = merge(x = totalPerDay, y = nrOfDaysPerRain, by='rainData$rainGroups')
+ names(totals) = c('Rainfall', 'Total', 'NrOfDays')
+ totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
+ 
+ ggplot(totals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge")
 
 ```
 
-How does rainfall affect the consumer decision when purchasing alcohol?
+
 
 Insert text and analysis. 
 
