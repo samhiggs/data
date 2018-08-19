@@ -51,24 +51,21 @@ In the rmd file, you will see how you can load your own dataset from either 1) a
 
 ```{r}
 
-# LOAD DATA v1 - uncomment the link below to: load data direct from html
-#cars = read.csv("dataset URL")
-
-# LOAD DATA v2 - uncomment the link below to: load data from local file
-#cars = read.csv("dataset file location")
+# LOAD alcohol and weather data
+alc_data = read.csv("data/ProcessedData.csv")
 
 # Quick look at top 5 rows of data
-head(mtcars)
+head(alc_data)
 
 ## Size of data
 # For the mtcars dataset, there are 32 rows (the types of cars) and 11 variables (properties of the cars).
-dim(mtcars)
+dim(alc_data)
 
 ## R's classification of data
-class(mtcars)
+class(alc_data)
 
 ## R's classification of variables
-str(mtcars)
+str(alc_data)
 #sapply(mtcars, class)
 ```
 
@@ -82,6 +79,10 @@ Summary:
 - Each column represents ...
 
 <br>
+
+##IDA
+Complexity of data:
+ We are looking at a dataset with len(names())
 
 ## Research Question 1
 
@@ -111,6 +112,10 @@ Insert text and analysis.
 Summary: 
 
 <br>
+
+## Research Question 4
+
+TODO:
 
 # Conclusions
 
