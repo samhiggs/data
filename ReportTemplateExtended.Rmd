@@ -50,6 +50,7 @@ Read about the [mtcars data set](https://stat.ethz.ch/R-manual/R-devel/library/d
 In the rmd file, you will see how you can load your own dataset from either 1) an online source using a URL or 2) a local file on your own computer.
 
 ```{r}
+sales = read.csv("data/TotalSales.csv")
 
 # LOAD DATA v1 - uncomment the link below to: load data direct from html
 #cars = read.csv("dataset URL")
@@ -95,7 +96,7 @@ Summary:
 
 How does rainfall affect the consumer decision when purchasing alcohol?
 
-Insert text and analysis. 
+Insert text and analysis.
 
 Summary: 
 
