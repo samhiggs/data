@@ -93,7 +93,7 @@ How does the maximum temperature affect the consumer decision when purcahsing al
 
 Insert text and analysis.
 
-Lets start at looking at how much an person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represent the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe that people tend to spend more money when the temperature is between 35 and 40 degrees. 
+Lets start at looking at how much a person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represent the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe that people tend to spend more money when the temperature is between 35 and 40 degrees. 
 
 
 
