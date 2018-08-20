@@ -91,6 +91,12 @@ Complexity of data:
 
 How does the maximum temperature affect the consumer decision when purcahsing alcohol?
 
+Insert text and analysis.
+
+Lets start at looking at how much an person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represent the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe that people tend to spend more money when the temperature is between 35 and 40 degrees. 
+
+
+
 ```{r}
 #The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
 temp = data$Maximum.temperature..Degree.C.
@@ -103,12 +109,26 @@ transactions = merge(x = meanPerPerson, y = medPerPerson, by='data$tempGroups')
 names(transactions) = c('Temperature', 'Mean_total', 'Median_total')
 print(transactions)
 
- ggplot(transactions, aes(Temperature, Mean_total)) + geom_bar(stat="identity", position = "dodge") 
- ggplot(transactions, aes(Temperature, Median_total)) + geom_bar(stat="identity", position = "dodge")
+Fre <- as.data.frame(table(data$tempGroups))
+colnames(Fre)[1] <- "tempGroups" 
+Fre$lab <- as.character(Fre$Freq)
+
+
+#Barplot for average money spent with median lines
+ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average how much each person spends (in dollars) for different temperature") + ylab("Mean") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+
+ #Barplot showing only median
+ #ggplot(transactions, aes(Temperature, Median_total)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Median how much each person spends (in dollars) for different temperature") + ylab("Median") + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
+ 
+ #ggplot(data, aes(Maximum.temperature..Degree.C., median(Total)), group = 1) + geom_boxplot() + coord_flip()
 
  #Number of transactions per temperature range
- barplot(table(data$tempGroups))
- 
+ #barplot(table(data$tempGroups))
+
+```
+Lets look at what an average day looks like in total sales for each temperature range. This seems to back up what we where saying before. That in extreme temperature (10 - 15 and 40 - 45 degrees) people seem to buy less alcohol while in milder temperatures people seem to buy alot. We also see the spike again when the temperature is between 35 - 40 degrees. 
+
+```{r}
  
  #Total money spent for each temperature range
  totalPerDay = aggregate(data$Total ~ data$tempGroups, data, sum)
@@ -117,7 +137,7 @@ print(transactions)
  names(totals) = c('Temperature', 'Total', 'NrOfDays')
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
  
- ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") 
+ ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average how much is spent in one day (in dollars) for different temperature") + ylab("Mean") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
  
 ```
 
@@ -127,9 +147,9 @@ Looking at the values of the median and mean purchase transactions we see that t
 ## Research Question 2
 How does rainfall affect the consumer decision when purchasing alcohol?
 
-<<<<<<< HEAD
+
 Insert text and analysis.
-=======
+
 There are a few days for which we do not have rain data so we start by removing those rows. We then take a better look at the rain data Let's start by taking a better look at the rainfall data
 ```{r}
 rainData = data %>% drop_na(Rainfall.amount..millimetres.)
@@ -173,7 +193,6 @@ print(transactions)
 
 
 Insert text and analysis. 
->>>>>>> a59d3d237998648ec4d7e6d4b61a16076b4ce9e0
 
 Summary: 
 
