@@ -50,26 +50,25 @@ Read about the [mtcars data set](https://stat.ethz.ch/R-manual/R-devel/library/d
 In the rmd file, you will see how you can load your own dataset from either 1) an online source using a URL or 2) a local file on your own computer.
 
 ```{r}
-sales = read.csv("data/TotalSales.csv")
 
-# LOAD DATA v1 - uncomment the link below to: load data direct from html
-#cars = read.csv("dataset URL")
+# LOAD DATA
+library(ggplot2)
+library(tidyr)
+data = read.csv("data/ProcessedData.csv")
 
-# LOAD DATA v2 - uncomment the link below to: load data from local file
-#cars = read.csv("dataset file location")
 
 # Quick look at top 5 rows of data
-head(mtcars)
+head(data)
 
 ## Size of data
 # For the mtcars dataset, there are 32 rows (the types of cars) and 11 variables (properties of the cars).
-dim(mtcars)
+dim(data)
 
 ## R's classification of data
-class(mtcars)
+class(data)
 
 ## R's classification of variables
-str(mtcars)
+str(data)
 #sapply(mtcars, class)
 ```
 
@@ -84,25 +83,103 @@ Summary:
 
 <br>
 
+##IDA
+Complexity of data:
+ We are looking at a dataset with len(names())
+
 ## Research Question 1
 
-How Does temperature affect the consumer decision when purchasing alcohol?
+How does the maximum temperature affect the consumer decision when purcahsing alcohol?
 
-Insert text and analysis. 
+```{r}
+#The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
+temp = data$Maximum.temperature..Degree.C.
+data$tempGroups = cut(temp, c(10,15,20,25,30,35,40,45))
+
+#Transaction sizes for each temperature range
+meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
+medPerPerson = aggregate(data$Total ~ data$tempGroups, data, median)
+transactions = merge(x = meanPerPerson, y = medPerPerson, by='data$tempGroups')
+names(transactions) = c('Temperature', 'Mean_total', 'Median_total')
+print(transactions)
+
+ ggplot(transactions, aes(Temperature, Mean_total)) + geom_bar(stat="identity", position = "dodge") 
+ ggplot(transactions, aes(Temperature, Median_total)) + geom_bar(stat="identity", position = "dodge")
+
+ #Number of transactions per temperature range
+ barplot(table(data$tempGroups))
+ 
+ 
+ #Total money spent for each temperature range
+ totalPerDay = aggregate(data$Total ~ data$tempGroups, data, sum)
+ nrOfDaysPerTemp = aggregate(data$Date ~ data$tempGroups, data, function(x) length(unique(x)))
+ totals = merge(x = totalPerDay, y = nrOfDaysPerTemp, by='data$tempGroups')
+ names(totals) = c('Temperature', 'Total', 'NrOfDays')
+ totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
+ 
+ ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") 
+ 
+```
 
 Summary: 
+Looking at the values of the median and mean purchase transactions we see that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definate drop in amount of money spent per purchase. During the very hottest periods 40-45 degrees there is also a massive drop in amount spent on each transaction. However it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occured at the 35-40 temperature range. This could be because people drink more alcohol, however these would be regular temperatures during Christamas time when people are on vacation and drink more alcohol in general.
 
 ## Research Question 2
-
 How does rainfall affect the consumer decision when purchasing alcohol?
 
+<<<<<<< HEAD
 Insert text and analysis.
+=======
+There are a few days for which we do not have rain data so we start by removing those rows. We then take a better look at the rain data Let's start by taking a better look at the rainfall data
+```{r}
+rainData = data %>% drop_na(Rainfall.amount..millimetres.)
+print(paste('Number of rows with missing values for rainfall: ', nrow(data)-nrow(rainData)))
+rain = rainData$Rainfall.amount..millimetres.
+print(paste('Maximum rainfall', max(rain)))
+print(paste('Minimum rainfall', min(rain)))
+print(paste('Mean rainfall', mean(rain)))
+print(paste('Median rainfall', median(rain)))
+```
+
+```{r}
+#We start by changing the rainfall from a quantitative variable to a qualitative one
+rainData$rainGroups = cut(rain, c(0,5,15,40,70))
+
+#Transaction sizes for each temperature range
+meanPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, rainData, mean)
+medPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, data, median)
+transactions = merge(x = meanPerPerson, y = medPerPerson, by='rainData$rainGroups')
+names(transactions) = c('Rainfall', 'Mean_total', 'Median_total')
+print(transactions)
+
+ ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge") 
+ ggplot(transactions, aes(Rainfall, Median_total)) + geom_bar(stat="identity", position = "dodge")
+
+ #Number of transactions for each rainfall range
+ barplot(table(rainData$rainGroups))
+ 
+ 
+ #Total money spent for each temperature range
+ totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
+ nrOfDaysPerRain = aggregate(rainData$Date ~ rainData$rainGroups, rainData, function(x) length(unique(x)))
+ totals = merge(x = totalPerDay, y = nrOfDaysPerRain, by='rainData$rainGroups')
+ names(totals) = c('Rainfall', 'Total', 'NrOfDays')
+ totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
+ 
+ ggplot(totals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge")
+
+```
+
+
+
+Insert text and analysis. 
+>>>>>>> a59d3d237998648ec4d7e6d4b61a16076b4ce9e0
 
 Summary: 
 
 ## Research Question 3
 
-What does the time of year affect the consumer decision when purchasing alcohol?
+How does the time of year affect the consumer decision when purchasing alcohol?
 
 Other possible research questions: 
 What time of day do people buy their alcohol?
@@ -112,6 +189,10 @@ Insert text and analysis.
 Summary: 
 
 <br>
+
+## Research Question 4
+
+TODO:
 
 # Conclusions
 
