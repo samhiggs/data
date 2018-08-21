@@ -38,7 +38,17 @@ output:
 <br>
 
 <br>
-# Domain Knowledge
+# Full Report
+
+## Initial Data Analysis (IDA)
+### Source of Data
+This report uses data from an off-premise liquor store in a small up-market shopping centre called Saporium in Rosebery, NSW Australia. 
+
+#### Rosebery Demographic
+Rosebery has a population of approximately 10,000 with a median age of 33 and 2,500 families. The median weekly income is $1,900 and weekly rent is $580. 34% of residents have a university or tertiary education which is twice that of NSW average and 67% work full-time. 58% of the population live in flats or apartments.
+The suburb has a diverse mix of cultures with Chinese and Greek ancestory heavily over-represented compared to the NSW Average. 63% of the population's parents were both born overseas, just under double the NSW average. Eastern orthodox over-represented and Anglican under-represented.(ABS, 2016)
+
+### Domain Knowledge
 This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. Lots of small businesses fail due to incorrect product placement, marketing or pricing. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. It is therefore imperative that they
   1. stock the correct product
   2. Market the correct product
@@ -58,17 +68,6 @@ Research indicates that weather can effect consumer spending in three ways
 
 We will use this report to show small businesses how they can use their data to increase profitability by making informed decisions about stocking, marketing and pricing their products, helping them find the signal in the noise.
 
-# The Data
-This report uses data from an off-premise liquor store in Rosebery, NSW Australia.
-# Full Report
-
-## Initial Data Analysis (IDA)
-
-RStudio has many data sets already loaded in. The example below uses preloaded data direct from RStudio example dataset: mtcars.
-
-Read about the [mtcars data set](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/mtcars.html).
-
-In the rmd file, you will see how you can load your own dataset from either 1) an online source using a URL or 2) a local file on your own computer.
 
 ```{r}
 
@@ -78,21 +77,20 @@ library(tidyr)
 data = read.csv("data/ProcessedData.csv")
 
 
-# Quick look at top 5 rows of data
+# Quick look at top 6 rows of data
 head(data)
 
 ## Size of data
-# For the mtcars dataset, there are 32 rows (the types of cars) and 11 variables (properties of the cars).
 dim(data)
 
 ## R's classification of data
 class(data)
-
 ## R's classification of variables
 str(data)
 #sapply(mtcars, class)
 ```
-
+### Classification of Variables
+The dataset contains `r nrow(data)` sales where each row represents 1 sale.
 Summary:
 
 - The data came from two different sources. The weather data came in two different data sets from the [Bureau of Meteorology] (http://www.bom.gov.au/climate/data/) website and the sale data of alcoholic beverages came from a local store in Sydney. We are using data from both resources and combining the into one big dataset. a
