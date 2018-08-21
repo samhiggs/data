@@ -54,6 +54,7 @@ In the rmd file, you will see how you can load your own dataset from either 1) a
 # LOAD DATA
 library(ggplot2)
 library(tidyr)
+library(xtable)
 data = read.csv("data/ProcessedData.csv")
 
 
@@ -115,7 +116,7 @@ Fre$lab <- as.character(Fre$Freq)
 
 
 #Barplot for average money spent with median lines
-ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average how much each person spends (in dollars) for different temperature") + ylab("Mean") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
 
  #Barplot showing only median
  #ggplot(transactions, aes(Temperature, Median_total)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Median how much each person spends (in dollars) for different temperature") + ylab("Median") + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
@@ -137,7 +138,7 @@ Lets look at what an average day looks like in total sales for each temperature 
  names(totals) = c('Temperature', 'Total', 'NrOfDays')
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
  
- ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average how much is spent in one day (in dollars) for different temperature") + ylab("Mean") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+ ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average money spent (dollars) in one day for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
  
 ```
 
@@ -159,6 +160,7 @@ print(paste('Maximum rainfall', max(rain)))
 print(paste('Minimum rainfall', min(rain)))
 print(paste('Mean rainfall', mean(rain)))
 print(paste('Median rainfall', median(rain)))
+table(max(rain), min(rain), mean(rain), median(rain))
 ```
 
 ```{r}
