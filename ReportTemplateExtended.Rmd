@@ -76,6 +76,7 @@ In the rmd file, you will see how you can load your own dataset from either 1) a
 library(ggplot2)
 library(tidyr)
 library(xtable)
+library(knitr)
 data = read.csv("data/ProcessedData.csv")
 
 
@@ -124,12 +125,22 @@ Lets start at looking at how much a person spends in the store on average. The n
 temp = data$Maximum.temperature..Degree.C.
 data$tempGroups = cut(temp, c(10,15,20,25,30,35,40,45))
 
+#Take a look at overall data before looking at the graphs
+heatData = data %>% drop_na(Maximum.temperature..Degree.C.)
+
+dataFrame <- data.frame(Rows = c(nrow(data)-nrow(heatData)),
+                        Max = c(max(temp)),
+                        Min = c(min(temp)),
+                        Mean = c(mean(temp)),
+                        Median = c(median(temp)))
+
+kable(dataFrame, caption = "Fuck yeah", col.names = c("Missing rows", "Max heat", "Min heat", "Mean maximum heat", "Median of maximum heat"))
+
 #Transaction sizes for each temperature range
 meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
 medPerPerson = aggregate(data$Total ~ data$tempGroups, data, median)
 transactions = merge(x = meanPerPerson, y = medPerPerson, by='data$tempGroups')
 names(transactions) = c('Temperature', 'Mean_total', 'Median_total')
-print(transactions)
 
 Fre <- as.data.frame(table(data$tempGroups))
 colnames(Fre)[1] <- "tempGroups" 
@@ -175,13 +186,16 @@ Insert text and analysis.
 There are a few days for which we do not have rain data so we start by removing those rows. We then take a better look at the rain data Let's start by taking a better look at the rainfall data
 ```{r}
 rainData = data %>% drop_na(Rainfall.amount..millimetres.)
-print(paste('Number of rows with missing values for rainfall: ', nrow(data)-nrow(rainData)))
 rain = rainData$Rainfall.amount..millimetres.
-print(paste('Maximum rainfall', max(rain)))
-print(paste('Minimum rainfall', min(rain)))
-print(paste('Mean rainfall', mean(rain)))
-print(paste('Median rainfall', median(rain)))
-table(max(rain), min(rain), mean(rain), median(rain))
+
+dataFrame <- data.frame(Rows = c(nrow(data)-nrow(rainData)),
+                        Max = c(max(rain)),
+                        Min = c(min(rain)),
+                        Mean = c(mean(rain)),
+                        Median = c(median(rain)))
+
+kable(dataFrame, caption = "Fuck yeah", col.names = c("Missing rows", "Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
+
 ```
 
 ```{r}
