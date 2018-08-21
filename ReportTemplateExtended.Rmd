@@ -24,9 +24,7 @@ output:
     toc_float: true
     #This allows toc to update relative to your location as you scroll down the html page.
     code_folding: hide
-    #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you open the document
-    
-    # More information: http://rmarkdown.rstudio.com/html_document_format.html
+    #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you 
 ---
 
 <br>
@@ -42,7 +40,7 @@ output:
 
 ## Initial Data Analysis (IDA)
 ### Source of Data
-This report uses data from an off-premise liquor store in a small up-market shopping centre called Saporium in Rosebery, NSW Australia. 
+This report uses data from an off-premise liquor store called The Drink Hive in a small up-market shopping centre called Saporium in Rosebery, NSW Australia. 
 
 #### Rosebery Demographic
 Rosebery has a population of approximately 10,000 with a median age of 33 and 2,500 families. The median weekly income is $1,900 and weekly rent is $580. 34% of residents have a university or tertiary education which is twice that of NSW average and 67% work full-time. 58% of the population live in flats or apartments.
@@ -70,13 +68,26 @@ We will use this report to show small businesses how they can use their data to 
 
 
 ```{r}
-
+#This prevents strings from being factorised which keeps Date as Date
+options(stringsAsFactors = FALSE)
 # LOAD DATA
 library(ggplot2)
 library(tidyr)
-data = read.csv("data/ProcessedData.csv")
+data = read.csv("data/ProcessedData2.csv")
 
+head(data$Date)
+#Convert date to date format
+# convert date column to date type and format to Australian date standards
+data$Date <- format(as.Date(data$Date), "%d-%m-%Y")
 
+# view R class of data
+class(data$DATE)
+## [1] "Date"
+
+# view results
+head(data$DATE)
+## [1] "2013-08-21" "2013-08-26" "2013-08-27" "2013-09-01" "2013-09-09"
+## [6] "2013-09-10"
 # Quick look at top 6 rows of data
 head(data)
 
@@ -90,8 +101,32 @@ str(data)
 #sapply(mtcars, class)
 ```
 ### Classification of Variables
-The dataset contains `r nrow(data)` sales where each row represents 1 sale.
-Summary:
+The dataset contains `r nrow(data) - 1` sales where each row represents 1 sale.
+We are representing the population using a small sample described above.
+We have removed columns that are not relevant to our clients use. We are using a multivariant dataset that consists of `r ncol(data)`.
+Of `r names(data)`
+For our research questions we will be looking at:
+  "Date", as an ordinal categorical measurement representing days in a week, months in a year and     seasons in a year. The min is 
+  "Total", 
+ 
+
+### Stakeholders
+#### Customer - Indirect External Stakeholder
+The owner of The Drink Hive, Mal Higgs is a customer. He will receive this report and be able to act on its recommendations. Mal has over 40 years experience in retail liquor and therefore has a strong intuition and has made his own hypotheses/predictions as to the outcome. He came to us as he does not have a mathematical nor statistical background and his Point Of Sale (POS) software does not help with his marketing campaign. Mal is a useful resource for questions about retail and the customer however we must take care not to be bias and assess the data objectively. We must also present the report in a way that a non-technical person can understand.
+
+#### Project Team - Direct Internal Stakeholder
+The project tea is made up of Anthony, Science Major, Sindi, Ivan and Sam who are Computer Science majors. We have decided to break up the team into their strenghts and backgrounds whilst also cross-checking each other to ensure that every member of the team learns and we can challenge each others thinking. Each member of the project team will be working on the research questions presented as well as focusing on the below areas of the report.
+
+Sam has a background in business and data analytics. He will focus on the Initial Data Analysis. He must be aware of the limitations of his understanding of data science to ensure the relevant variables are used. 
+Anthony has a strong critical thinking mind and a background in scientific literature. He will focus on the evidence based conclusions, compilation and presentation of the report. He must be must be aware of his non-technical audience to present the findings in a way that can be understood by a small business owner.
+Sindri and Ivar have backgrounds in Computer Science. They will be combining and wrangling the datasets into a useable table and lead the data representations found in this report. They will be ensuring the numerical and graphical summaries are insightful and relevant. They must ensure the correct data points and graphical representations are used to portray the questions being researched.
+
+We have a fantastic breadth of knowledge that will make this report a valuable and useful tool to Mal.
+
+#### Sponsor - Primary & Secondary Stakeholder
+Our tutor and the University of Sydney are our primary and Secondary stakeholder. They assist in our vision and are responsible for the overall success of the project. They will review our submission and have created specific outcomes that we will be measured against. We must be careful to meet the requirements for this stakeholder or they will fail us and we will not be able to continue to report and continue working. 
+
+## Summary
 
 - The data came from two different sources. The weather data came in two different data sets from the [Bureau of Meteorology] (http://www.bom.gov.au/climate/data/) website and the sale data of alcoholic beverages came from a local store in Sydney. We are using data from both resources and combining the into one big dataset. a
 - The data is/is not valid because 
