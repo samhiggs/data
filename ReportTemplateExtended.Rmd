@@ -38,7 +38,28 @@ output:
 <br>
 
 <br>
+# Domain Knowledge
+This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. Lots of small businesses fail due to incorrect product placement, marketing or pricing. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. It is therefore imperative that they
+  1. stock the correct product
+  2. Market the correct product
+  3. Price their products effectively
+In the past, these decisions have been the intuition of a good business operator however with the accessibility of data and analytics tools we can now take a more scientific approach which can be replicated by any business.
 
+There is a wealth of evidence that shows that weather influences consumer behaviour and understanding this leads to better marketing decisions (Murray et al, 2010). The key areas of consumer behaviour this report will address are what conditions weather effects consumer spending and what conditions effect consumer behaviour. 
+
+Weather is defined as ______. Researchers indicate that weather alters the shoppers mood. 
+
+Research indicates that weather can effect consumer spending in three ways
+  1. Bad weather keeps people at home reducing foot traffic and sales
+  2. Weather can influence store traffic and sales volume, and
+  3. Weather can influence sales by affecting the customers internal state.
+
+
+
+We will use this report to show small businesses how they can use their data to increase profitability by making informed decisions about stocking, marketing and pricing their products, helping them find the signal in the noise.
+
+# The Data
+This report uses data from an off-premise liquor store in Rosebery, NSW Australia.
 # Full Report
 
 ## Initial Data Analysis (IDA)
