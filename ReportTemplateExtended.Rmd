@@ -249,8 +249,22 @@ hour = as.integer(substr(data$Time, 0, 2))
 data$timeGroups = cut(hour, seq(8,20,1))
 table(data$timeGroups)
 
-hot = data$timeGroups[data$Maximum.temperature..Degree.C. >= 25]
-cold = data$timeGroups[data$Maximum.temperature..Degree.C. < 25]
+#Total money made per time gap
+library(dplyr)
+test = data %>%
+    group_by(timeGroups, tempGroups) %>% 
+    summarize(total = sum(Total) ) 
+
+ggplot(test, aes(x = timeGroups, y = total)) + geom_point() + geom_line(aes(group=tempGroups))
+
+
+#average money spent by customer per transaction, note
+testMean = data %>%
+    group_by(timeGroups, tempGroups) %>% 
+    summarize(meanTotal = mean(Total) ) 
+
+ggplot(testMean, aes(x = timeGroups, y = meanTotal)) + geom_point() + facet_wrap(~tempGroups)
+
 ```
 
 
