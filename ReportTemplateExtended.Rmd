@@ -74,7 +74,6 @@ We will use this report to show small businesses how they can use their data to 
 # LOAD DATA
 library(ggplot2)
 library(tidyr)
-library(xtable)
 library(knitr)
 data = read.csv("data/ProcessedData.csv")
 
@@ -91,6 +90,7 @@ class(data)
 str(data)
 #sapply(mtcars, class)
 ```
+
 ### Classification of Variables
 The dataset contains `r nrow(data)` sales where each row represents 1 sale.
 Summary:
@@ -169,7 +169,6 @@ Lets look at what an average day looks like in total sales for each temperature 
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
  
  ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average money spent (dollars) in one day for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
- 
 ```
 
 Summary: 
@@ -240,12 +239,34 @@ Summary:
 
 ## Research Question 3
 
-How does the time of year affect the consumer decision when purchasing alcohol?
+How does the time of day affect the consumer decision when purchasing alcohol in different temperatures?
 
-Other possible research questions: 
-What time of day do people buy their alcohol?
 
 Insert text and analysis. 
+
+```{r}
+hour = as.integer(substr(data$Time, 0, 2))
+data$timeGroups = cut(hour, seq(8,20,1))
+table(data$timeGroups)
+
+#Total money made per time gap
+library(dplyr)
+test = data %>%
+    group_by(timeGroups, tempGroups) %>% 
+    summarize(total = sum(Total) ) 
+
+ggplot(test, aes(x = timeGroups, y = total)) + geom_point() + geom_line(aes(group=tempGroups))
+
+
+#average money spent by customer per transaction, note
+testMean = data %>%
+    group_by(timeGroups, tempGroups) %>% 
+    summarize(meanTotal = mean(Total) ) 
+
+ggplot(testMean, aes(x = timeGroups, y = meanTotal)) + geom_point() + facet_wrap(~tempGroups)
+
+```
+
 
 Summary: 
 

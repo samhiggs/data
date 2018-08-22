@@ -93,7 +93,7 @@ weather['Date'] = (weather['Year'].map(str) + '-'
 
 
 # Joining up the weather data with the sales data
-total = pd.merge(Sales.drop(['Customer Name', 'Customer Code', 'Note', 'Discount', 'AccountCodeSale', 'AccountCodePurchase', 'Register', 'User', 'Status', 'Sku', 'Line Type', 'Loyalty'], axis=1)
+total = pd.merge(Sales.drop(['Customer Name', 'Customer Code', 'Note', 'Discount', 'AccountCodeSale', 'AccountCodePurchase', 'Register', 'User', 'Status', 'Sku', 'Line Type', 'Loyalty', 'Quantity', 'Subtotal', 'Sales Tax', 'Paid'], axis=1)
                 , weather.drop(['Year', 'Month', 'Day'], axis=1)
                 , on='Date'
                 , how = 'inner')
