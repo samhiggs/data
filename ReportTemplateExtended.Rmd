@@ -206,14 +206,14 @@ medPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, data, median)
 transactions = merge(x = meanPerPerson, y = medPerPerson, by='rainData$rainGroups')
 names(transactions) = c('Rainfall', 'Mean_total', 'Median_total')
 
-FreRain <- as.data.frame(table(data$rainGroups))
+FreRain <- as.data.frame(table(rainData$rainGroups))
 colnames(Fre)[1] <- "rainGroups" 
 FreRain$lab <- as.character(FreRain$Freq)
 
 #Barplot for average money spent with median lines
-#ggplot(transactions, aes(Rainfall, Mean_total), label = FreRain$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = FreRain$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('0','0 - 5','5 - 15', '15 - 40', '40 - 70'))
+ggplot(transactions, aes(Rainfall, Mean_total), label = FreRain$lab) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + xlab("Rainfall (mm)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = FreRain$lab), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('0','0 - 5','5 - 15', '15 - 40', '40 - 70'))
 
- ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge") 
+ #ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge") 
  ggplot(transactions, aes(Rainfall, Median_total)) + geom_bar(stat="identity", position = "dodge")
 
  #Number of transactions for each rainfall range
