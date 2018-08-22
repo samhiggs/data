@@ -204,16 +204,15 @@ Lets look at what an average day looks like in total sales for each temperature 
  
 ```
 
-Summary: 
-Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However, the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definite drop in the amount of money spent per purchase as in total sales. During the very hottest periods 40-45 degrees there is also a massive drop in the same fields. However, it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occurred at the 35-40 temperature range. This could be because people drink more alcohol, however, these would be regular temperatures during the summer break time when people are on vacation and are hence drinking more alcohol in general. All in all people tend to buy more alchohol in milder temperatures than in extreme ones. 
+### Summary
+The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represents the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe that people tend to spend more money when the temperature is between 35 and 40 degrees.
+
+Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However, the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definite drop in the amount of money spent per purchase. During the very hottest periods 40-45 degrees there is also a massive drop in the amount spent on each transaction. However, it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occurred at the 35-40 temperature range. This could be because people drink more alcohol, however, these would be regular temperatures during the summer break time when people are on vacation and are hence drinking more alcohol in general.
 
 ## Research Question 2
 How does rainfall affect the consumer decision when purchasing alcohol?
 
-
-Insert text and analysis.
-
-There are a few days for which we do not have rain data so we start by removing those rows. We then take a better look at the rain data Let's start by taking a better look at the rainfall data
+There are a few days for which we do not have rain data so we start by removing those rows. We then take a better look at the rain data. Let's start by taking a better look at the rainfall data
 ```{r}
 rainData = data %>% drop_na(Rainfall.amount..millimetres.)
 rain = rainData$Rainfall.amount..millimetres.
@@ -262,10 +261,6 @@ ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", posi
  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different temperature") + theme(plot.title = element_text(hjust = 0.5))
 
 ```
-
-
-
-Insert text and analysis. 
 
 Summary: 
 -	There many more transactions on days that are not raining can be attributed to the fact that there are many more sunny days in Sydney than rainy days
