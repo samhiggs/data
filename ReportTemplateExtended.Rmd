@@ -35,6 +35,14 @@ output:
 - The aim of this report is to find out what kind of correlations are between weather and alcohol sales in Sydney.
 - The main discoveries are ...
 
+where did we get the data and how
+about the datasets, what it is doing and what we did with it
+conclusions 
+And then final conclusions
+max 400 words
+
+
+
 <br>
 
 <br>
@@ -74,6 +82,7 @@ We will use this report to show small businesses how they can use their data to 
 # LOAD DATA
 library(ggplot2)
 library(tidyr)
+library(xtable)
 library(knitr)
 data = read.csv("data/ProcessedData.csv")
 
@@ -90,7 +99,6 @@ class(data)
 str(data)
 #sapply(mtcars, class)
 ```
-
 ### Classification of Variables
 The dataset contains `r nrow(data)` sales where each row represents 1 sale.
 Summary:
@@ -143,7 +151,7 @@ names(transactions) = c('Temperature', 'Mean_total', 'Median_total')
 Fre <- as.data.frame(table(data$tempGroups))
 colnames(Fre)[1] <- "tempGroups" 
 Fre$lab <- as.character(Fre$Freq)
-
+Fre
 
 #Barplot for average money spent with median lines
 ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
@@ -169,6 +177,7 @@ Lets look at what an average day looks like in total sales for each temperature 
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
  
  ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average money spent (dollars) in one day for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+ 
 ```
 
 Summary: 
@@ -197,7 +206,7 @@ kable(dataFrame, caption = "Fuck yeah", col.names = c("Missing rows", "Max rainf
 
 ```{r}
 #We start by changing the rainfall from a quantitative variable to a qualitative one
-rainData$rainGroups = cut(rain, c(0,0.1,5,15,40,70), include.lowest = TRUE)
+rainData$rainGroups = cut(rain, c(0,0.1,15,70), include.lowest = TRUE)
 
 #Transaction sizes for each temperature range
 meanPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, rainData, mean)
@@ -206,18 +215,17 @@ transactions = merge(x = meanPerPerson, y = medPerPerson, by='rainData$rainGroup
 names(transactions) = c('Rainfall', 'Mean_total', 'Median_total')
 
 FreRain <- as.data.frame(table(rainData$rainGroups))
-colnames(Fre)[1] <- "rainGroups" 
-FreRain$lab <- as.character(FreRain$Freq)
+colnames(FreRain)[1] <- "rainGroups" 
+
 
 #Barplot for average money spent with median lines
-ggplot(transactions, aes(Rainfall, Mean_total), label = FreRain$lab) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + xlab("Rainfall (mm)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = FreRain$lab), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('0','0 - 5','5 - 15', '15 - 40', '40 - 70'))
+ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = FreRain$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain'))
 
- #ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge") 
- ggplot(transactions, aes(Rainfall, Median_total)) + geom_bar(stat="identity", position = "dodge")
 
  #Number of transactions for each rainfall range
- barplot(table(rainData$rainGroups))
+ ggplot(rainData, aes(rainGroups)) + geom_bar() + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Number of transactions") + xlab("Rainfall") + theme_bw() + ggtitle("Number of total transaction for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
  
+ FreRain
  
  
  #Total money spent for each temperature range
@@ -227,7 +235,7 @@ ggplot(transactions, aes(Rainfall, Mean_total), label = FreRain$lab) + geom_bar(
  names(totals) = c('Rainfall', 'Total', 'NrOfDays')
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
  
- ggplot(totals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge")
+ ggplot(totals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different temperature") + theme(plot.title = element_text(hjust = 0.5))
 
 ```
 
@@ -239,42 +247,16 @@ Summary:
 
 ## Research Question 3
 
-How does the time of day affect the consumer decision when purchasing alcohol in different temperatures?
+How does the time of year affect the consumer decision when purchasing alcohol?
 
+Other possible research questions: 
+What time of day do people buy their alcohol?
 
 Insert text and analysis. 
-
-```{r}
-hour = as.integer(substr(data$Time, 0, 2))
-data$timeGroups = cut(hour, seq(8,20,1))
-table(data$timeGroups)
-
-#Total money made per time gap
-library(dplyr)
-test = data %>%
-    group_by(timeGroups, tempGroups) %>% 
-    summarize(total = sum(Total) ) 
-
-ggplot(test, aes(x = timeGroups, y = total)) + geom_point() + geom_line(aes(group=tempGroups))
-
-
-#average money spent by customer per transaction, note
-testMean = data %>%
-    group_by(timeGroups, tempGroups) %>% 
-    summarize(meanTotal = mean(Total) ) 
-
-ggplot(testMean, aes(x = timeGroups, y = meanTotal)) + geom_point() + facet_wrap(~tempGroups)
-
-```
-
 
 Summary: 
 
 <br>
-
-## Research Question 4
-
-TODO:
 
 # Conclusions
 
@@ -292,117 +274,5 @@ Style: APA
 
 - The way I contributed was
 - What I learnt about group work was ... 
-
-<br>
-
-
-# Beyond the Basics - extending your abilities with RMarkdown
-This quick reference guide will cover some basic RMarkdown for use in your projects. 
-
-<br>
-
-## Lists
-
-Here is a basic list:
-
-- To do 1
-
-- To do 2
-
-- To do 3
-
-<br>
-
-## Links
-
-Here is a link to interesting web page:
-
-[Interesting Web Page](https://www.ted.com/topics/visualizations)
-
-<br>
-
-
-## Tables
-
-Here is a simple table.
-
-| Tables        | Are           | Cool  |
-|---------------|:-------------:|------:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
-<br> 
-
-## Images
-
-Here is am image. It has not been adjusted in the rmd file, so represents the true size of the original image. This image is sourced directly from an online url. 
-
-To learn more about adding images directly from your own computer, see the comments in this rmd file. 
-
-![](https://petcube.com/blog/content/images/2017/08/kitten-supplies-cover.jpg)
-
-<!-- Begin comment
-
-Use the line below if you are sourcing an image from your own computer. For this line to run correctly, you would need to have an image called 'kitten.jpg' in a folder called 'figure' which is in the same folder as this rmd file.
-
-![](figure/kitten.jpg)
-
------------------------------
-**Making image adjustments**
-With some changes to the rmarkdown in the rmd file, you can also to reduce the image size by, say, 50% and make it left aligned:
-<div align="left">
-<img src="figure/kitten.jpg" width="50%" height="50%">
-</div>
------------------------------
-
-Give it a try! Find a picture of a kitten online, save it to your computer as described above and see what happens. 
-
-end comment --->
-
-<br>
-Image source: https://petcube.com/blog/10-all-important-kitten-supplies-infographic/
-
-<br>
-
-## Videos
-
-Below you will find a video embedded into your RMarkdown file. 
-Change the YouTube link in the rmd file to get a different video.
-
-<div style="max-width:640"><div style="position:relative;height:0;padding-bottom:56.25%"><iframe src="https://www.youtube.com/embed/a6KGPBflhiM" width="560" height="315" style="position:absolute;left:0;top:0;width:100%;height:100%" frameborder="0" scrolling="no" allowfullscreen></iframe></div></div>
-
-<br>
-
-## LaTeX
-
-You can even use LaTeX in an RMarkdown document!
-
-For example, how could you work out $\sum_{i=1}^{5} x_{i}^3$?
-
-<br>
-
-## R Code
-
-Here is an R code chunk:
-
-Try the following commands in R.
-```{r,eval=F}
-1+ exp(3) + sin(0.5)
-x=c(1,2,3)
-x^2
-sum(x)
-```
-
-Here is some in-line code `in-line code`. You can put any R code here for display, e.g. `sum(x)`
-
-<br>
-
-# RMarkdown Resources
-Check out the resources below for more information on RMarkdown. 
-
- <i class="fa fa-link"></i>[How to use R Markdown](https://www.oreilly.com/learning/easy-reproducible-reports-with-r?utm_medium=social&utm_source=twitter.com&utm_campaign=lgen&utm_content=data+webcast+ki&cmp=tw-data-na-article-lgen_tw_webcast_ki)
- 
-<i class="fa fa-link"></i>[Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
 
 <br>
