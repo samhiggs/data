@@ -33,6 +33,14 @@ output:
 - The aim of this report is to find out what kind of correlations are between weather and alcohol sales in Sydney.
 - The main discoveries are ...
 
+where did we get the data and how
+about the datasets, what it is doing and what we did with it
+conclusions 
+And then final conclusions
+max 400 words
+
+
+
 <br>
 
 <br>
@@ -71,7 +79,9 @@ options(stringsAsFactors = FALSE)
 # LOAD DATA
 library(ggplot2)
 library(tidyr)
-data = read.csv("data/ProcessedData2.csv")
+library(xtable)
+library(knitr)
+data = read.csv("data/ProcessedData.csv")
 
 head(data$Date)
 #Convert date to date format
@@ -143,42 +153,43 @@ Complexity of data:
 
 How does the maximum temperature affect the consumer decision when purcahsing alcohol?
 
-Insert text and analysis.
-
-Lets start at looking at how much a person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represent the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe that people tend to spend more money when the temperature is between 35 and 40 degrees. 
-
-
+Let´s first see some general information about out heat variables.
 
 ```{r}
 #The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
 temp = data$Maximum.temperature..Degree.C.
 data$tempGroups = cut(temp, c(10,15,20,25,30,35,40,45))
 
+#Take a look at overall data before looking at the graphs
+heatData = data %>% drop_na(Maximum.temperature..Degree.C.)
+
+dataFrame <- data.frame(Rows = c(nrow(data)-nrow(heatData)),
+                        Max = c(max(temp)),
+                        Min = c(min(temp)),
+                        Mean = c(mean(temp)),
+                        Median = c(median(temp)))
+
+kable(dataFrame, col.names = c("Missing rows", "Max heat", "Min heat", "Mean maximum heat", "Median of maximum heat"))
+```
+
+Lets start at looking at how much a person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represents the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe some sort of spike in the bar chart. People tend to spend more money when the temperature is between 35 and 40 degrees.
+```{r}
 #Transaction sizes for each temperature range
 meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
 medPerPerson = aggregate(data$Total ~ data$tempGroups, data, median)
 transactions = merge(x = meanPerPerson, y = medPerPerson, by='data$tempGroups')
 names(transactions) = c('Temperature', 'Mean_total', 'Median_total')
-print(transactions)
 
 Fre <- as.data.frame(table(data$tempGroups))
 colnames(Fre)[1] <- "tempGroups" 
 Fre$lab <- as.character(Fre$Freq)
 
-
 #Barplot for average money spent with median lines
-ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average how much each person spends (in dollars) for different temperature") + ylab("Mean") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
-
- #Barplot showing only median
- #ggplot(transactions, aes(Temperature, Median_total)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Median how much each person spends (in dollars) for different temperature") + ylab("Median") + theme_bw() + theme(plot.title = element_text(hjust = 0.5))
- 
- #ggplot(data, aes(Maximum.temperature..Degree.C., median(Total)), group = 1) + geom_boxplot() + coord_flip()
-
- #Number of transactions per temperature range
- #barplot(table(data$tempGroups))
+ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
 
 ```
-Lets look at what an average day looks like in total sales for each temperature range. This seems to back up what we where saying before. That in extreme temperature (10 - 15 and 40 - 45 degrees) people seem to buy less alcohol while in milder temperatures people seem to buy alot. We also see the spike again when the temperature is between 35 - 40 degrees. 
+
+Lets look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn´t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
 
 ```{r}
  
@@ -189,12 +200,12 @@ Lets look at what an average day looks like in total sales for each temperature 
  names(totals) = c('Temperature', 'Total', 'NrOfDays')
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
  
- ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average how much is spent in one day (in dollars) for different temperature") + ylab("Mean") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+ ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average money spent (dollars) in one day for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
  
 ```
 
 Summary: 
-Looking at the values of the median and mean purchase transactions we see that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definate drop in amount of money spent per purchase. During the very hottest periods 40-45 degrees there is also a massive drop in amount spent on each transaction. However it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occured at the 35-40 temperature range. This could be because people drink more alcohol, however these would be regular temperatures during Christamas time when people are on vacation and drink more alcohol in general.
+Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However, the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definite drop in the amount of money spent per purchase as in total sales. During the very hottest periods 40-45 degrees there is also a massive drop in the same fields. However, it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occurred at the 35-40 temperature range. This could be because people drink more alcohol, however, these would be regular temperatures during the summer break time when people are on vacation and are hence drinking more alcohol in general. All in all people tend to buy more alchohol in milder temperatures than in extreme ones. 
 
 ## Research Question 2
 How does rainfall affect the consumer decision when purchasing alcohol?
@@ -205,40 +216,50 @@ Insert text and analysis.
 There are a few days for which we do not have rain data so we start by removing those rows. We then take a better look at the rain data Let's start by taking a better look at the rainfall data
 ```{r}
 rainData = data %>% drop_na(Rainfall.amount..millimetres.)
-print(paste('Number of rows with missing values for rainfall: ', nrow(data)-nrow(rainData)))
 rain = rainData$Rainfall.amount..millimetres.
-print(paste('Maximum rainfall', max(rain)))
-print(paste('Minimum rainfall', min(rain)))
-print(paste('Mean rainfall', mean(rain)))
-print(paste('Median rainfall', median(rain)))
+
+dataFrame <- data.frame(Rows = c(nrow(data)-nrow(rainData)),
+                        Max = c(max(rain)),
+                        Min = c(min(rain)),
+                        Mean = c(mean(rain)),
+                        Median = c(median(rain)))
+
+kable(dataFrame, caption = "Fuck yeah", col.names = c("Missing rows", "Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
+
 ```
 
 ```{r}
 #We start by changing the rainfall from a quantitative variable to a qualitative one
-rainData$rainGroups = cut(rain, c(0,5,15,40,70))
+rainData$rainGroups = cut(rain, c(0,0.1,15,70), include.lowest = TRUE)
 
 #Transaction sizes for each temperature range
 meanPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, rainData, mean)
 medPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, data, median)
 transactions = merge(x = meanPerPerson, y = medPerPerson, by='rainData$rainGroups')
 names(transactions) = c('Rainfall', 'Mean_total', 'Median_total')
-print(transactions)
 
- ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge") 
- ggplot(transactions, aes(Rainfall, Median_total)) + geom_bar(stat="identity", position = "dodge")
+FreRain <- as.data.frame(table(rainData$rainGroups))
+colnames(FreRain)[1] <- "rainGroups" 
+
+
+#Barplot for average money spent with median lines
+ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = FreRain$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain'))
+
 
  #Number of transactions for each rainfall range
- barplot(table(rainData$rainGroups))
+ ggplot(rainData, aes(rainGroups)) + geom_bar() + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Number of transactions") + xlab("Rainfall") + theme_bw() + ggtitle("Number of total transaction for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
+ 
+ FreRain
  
  
  #Total money spent for each temperature range
  totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
  nrOfDaysPerRain = aggregate(rainData$Date ~ rainData$rainGroups, rainData, function(x) length(unique(x)))
- totals = merge(x = totalPerDay, y = nrOfDaysPerRain, by='rainData$rainGroups')
- names(totals) = c('Rainfall', 'Total', 'NrOfDays')
- totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
+ rainTotals = merge(x = totalPerDay, y = nrOfDaysPerRain, by='rainData$rainGroups')
+ names(rainTotals) = c('Rainfall', 'Total', 'NrOfDays')
+ rainTotals['meanPerDay'] = round(rainTotals$Total / rainTotals$NrOfDays, 1)
  
- ggplot(totals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge")
+ ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different temperature") + theme(plot.title = element_text(hjust = 0.5))
 
 ```
 
@@ -247,6 +268,12 @@ print(transactions)
 Insert text and analysis. 
 
 Summary: 
+-	There many more transactions on days that are not raining can be attributed to the fact that there are many more sunny days in Sydney than rainy days
+-	People buy a little bit more when it rains.
+-	The average money spent per transaction only rises slightly when there is any rain. 
+-	This may be because the store is located in a shopping centre. Maybe this would be different for stores that aren't in a shopping centre.
+
+
 
 ## Research Question 3
 
@@ -256,6 +283,36 @@ Other possible research questions:
 What time of day do people buy their alcohol?
 
 Insert text and analysis. 
+```{r}
+hour = as.integer(substr(data$Time, 0, 2))
+data$timeGroups = cut(hour, seq(8,20,1))
+#table(data$timeGroups)
+
+#Total money made per time gap
+library(dplyr)
+timeTemp = data %>%
+    group_by(timeGroups, tempGroups) %>% 
+    summarize(total = sum(Total) ) 
+
+names(nrOfDaysPerTemp) = c('tempGroups', 'nrOfDays')
+timeTemp = merge(x= timeTemp, y=nrOfDaysPerTemp , on='tempGroups')
+timeTemp['scaledTotal'] = timeTemp$total / timeTemp$nrOfDays
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point() + geom_line(aes(group=tempGroups))
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point() + facet_wrap(~tempGroups)
+
+
+#ggplot(test, aes(x = timeGroups, y = total)) + geom_point() + geom_line(aes(group=tempGroups))
+
+
+#average money spent by customer per transaction, note
+#testMean = data %>%
+#    group_by(timeGroups, tempGroups) %>% 
+#    summarize(meanTotal = mean(Total) ) 
+#ggplot(testMean, aes(x = timeGroups, y = meanTotal)) + geom_point() + facet_wrap(~tempGroups)
+
+
+```
+
 
 Summary: 
 
@@ -279,11 +336,8 @@ Kyle B. Murray, Fabrizio Di Muro, Adam Finn, Peter Popkowski Leszczyc, 2010. The
 
 Weather. (n.d) In Merriam-Websters Collegiate Dictionary. Retrieved from https://www.merriam-webster.com/dictionary/weather
 
-
-
 <br>
 
 # Personal reflection on group work
-
 - The way I contributed was
 - What I learnt about group work was ... 
