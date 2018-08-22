@@ -244,7 +244,7 @@ ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", posi
 ```{r}
 hour = as.integer(substr(data$Time, 0, 2))
 data$timeGroups = cut(hour, seq(8,20,1))
-table(data$timeGroups)
+#table(data$timeGroups)
 
 #Total money made per time gap
 library(dplyr)
