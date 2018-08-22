@@ -47,22 +47,20 @@ Rosebery has a population of approximately 10,000 with a median age of 33 and 2,
 The suburb has a diverse mix of cultures with Chinese and Greek ancestory heavily over-represented compared to the NSW Average. 63% of the population's parents were both born overseas, just under double the NSW average. Eastern orthodox over-represented and Anglican under-represented.(ABS, 2016)
 
 ### Domain Knowledge
-This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. Lots of small businesses fail due to incorrect product placement, marketing or pricing. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. It is therefore imperative that they
-  1. stock the correct product
+This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. It is therefore imperative that they
+  1. Stock the correct product
   2. Market the correct product
   3. Price their products effectively
-In the past, these decisions have been the intuition of a good business operator however with the accessibility of data and analytics tools we can now take a more scientific approach which can be replicated by any business.
+In the past, these decisions have been the intuition of a good business operator, however with the accessibility of data and analytics tools, we can now take a more scientific approach which can be replicated by any business.
 
-There is a wealth of evidence that shows that weather influences consumer behaviour and understanding this leads to better marketing decisions (Murray et al, 2010). The key areas of consumer behaviour this report will address are what conditions weather effects consumer spending and what conditions effect consumer behaviour. 
+There is a wealth of evidence which shows that weather influences consumer behaviour and understanding this leads to better marketing decisions (Murray et al, 2010). The key areas of consumer behaviour this report will address are what conditions weather effects consumer spending and what conditions effect consumer behaviour. 
 
-Weather is defined as ______. Researchers indicate that weather alters the shoppers mood. 
+Weather is defined by Merriam  as <i>the state of the atmosphere with respect to heat or cold, wetness or dryness, calm or storm, clearness or cloudiness.<\i> Researchers indicate that weather alters the shoppers mood. 
 
 Research indicates that weather can effect consumer spending in three ways
   1. Bad weather keeps people at home reducing foot traffic and sales
   2. Weather can influence store traffic and sales volume, and
   3. Weather can influence sales by affecting the customers internal state.
-
-
 
 We will use this report to show small businesses how they can use their data to increase profitability by making informed decisions about stocking, marketing and pricing their products, helping them find the signal in the noise.
 
@@ -275,7 +273,13 @@ Insert text.
 
 # References
 
-Style: APA 
+Australian Bureau of Statistics, 2016, 2016 Census QuickStats, Rosebery. viewed 21/08/2018 http://quickstats.censusdata.abs.gov.au/census_services/getproduct/census/2016/quickstat/SSC13405?opendocument
+
+Kyle B. Murray, Fabrizio Di Muro, Adam Finn, Peter Popkowski Leszczyc, 2010. The effect of weather on consumer spending. Journal of Retailing and Consumer Services (17) 512-520
+
+Weather. (n.d) In Merriam-Websters Collegiate Dictionary. Retrieved from https://www.merriam-webster.com/dictionary/weather
+
+
 
 <br>
 
@@ -283,117 +287,3 @@ Style: APA
 
 - The way I contributed was
 - What I learnt about group work was ... 
-
-<br>
-
-
-# Beyond the Basics - extending your abilities with RMarkdown
-This quick reference guide will cover some basic RMarkdown for use in your projects. 
-
-<br>
-
-## Lists
-
-Here is a basic list:
-
-- To do 1
-
-- To do 2
-
-- To do 3
-
-<br>
-
-## Links
-
-Here is a link to interesting web page:
-
-[Interesting Web Page](https://www.ted.com/topics/visualizations)
-
-<br>
-
-
-## Tables
-
-Here is a simple table.
-
-| Tables        | Are           | Cool  |
-|---------------|:-------------:|------:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
-
-<br> 
-
-## Images
-
-Here is am image. It has not been adjusted in the rmd file, so represents the true size of the original image. This image is sourced directly from an online url. 
-
-To learn more about adding images directly from your own computer, see the comments in this rmd file. 
-
-![](https://petcube.com/blog/content/images/2017/08/kitten-supplies-cover.jpg)
-
-<!-- Begin comment
-
-Use the line below if you are sourcing an image from your own computer. For this line to run correctly, you would need to have an image called 'kitten.jpg' in a folder called 'figure' which is in the same folder as this rmd file.
-
-![](figure/kitten.jpg)
-
------------------------------
-**Making image adjustments**
-With some changes to the rmarkdown in the rmd file, you can also to reduce the image size by, say, 50% and make it left aligned:
-<div align="left">
-<img src="figure/kitten.jpg" width="50%" height="50%">
-</div>
------------------------------
-
-Give it a try! Find a picture of a kitten online, save it to your computer as described above and see what happens. 
-
-end comment --->
-
-<br>
-Image source: https://petcube.com/blog/10-all-important-kitten-supplies-infographic/
-
-<br>
-
-## Videos
-
-Below you will find a video embedded into your RMarkdown file. 
-Change the YouTube link in the rmd file to get a different video.
-
-<div style="max-width:640"><div style="position:relative;height:0;padding-bottom:56.25%"><iframe src="https://www.youtube.com/embed/a6KGPBflhiM" width="560" height="315" style="position:absolute;left:0;top:0;width:100%;height:100%" frameborder="0" scrolling="no" allowfullscreen></iframe></div></div>
-
-<br>
-
-## LaTeX
-
-You can even use LaTeX in an RMarkdown document!
-
-For example, how could you work out $\sum_{i=1}^{5} x_{i}^3$?
-
-<br>
-
-## R Code
-
-Here is an R code chunk:
-
-Try the following commands in R.
-```{r,eval=F}
-1+ exp(3) + sin(0.5)
-x=c(1,2,3)
-x^2
-sum(x)
-```
-
-Here is some in-line code `in-line code`. You can put any R code here for display, e.g. `sum(x)`
-
-<br>
-
-# RMarkdown Resources
-Check out the resources below for more information on RMarkdown. 
-
- <i class="fa fa-link"></i>[How to use R Markdown](https://www.oreilly.com/learning/easy-reproducible-reports-with-r?utm_medium=social&utm_source=twitter.com&utm_campaign=lgen&utm_content=data+webcast+ki&cmp=tw-data-na-article-lgen_tw_webcast_ki)
- 
-<i class="fa fa-link"></i>[Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
-
-<br>
