@@ -175,6 +175,7 @@ Lets look at what an average day looks like in total sales for each temperature 
  totals = merge(x = totalPerDay, y = nrOfDaysPerTemp, by='data$tempGroups')
  names(totals) = c('Temperature', 'Total', 'NrOfDays')
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
+ totals
  
  ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average money spent (dollars) in one day for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
  
@@ -231,13 +232,15 @@ ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", posi
  #Total money spent for each temperature range
  totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
  nrOfDaysPerRain = aggregate(rainData$Date ~ rainData$rainGroups, rainData, function(x) length(unique(x)))
- totals = merge(x = totalPerDay, y = nrOfDaysPerRain, by='rainData$rainGroups')
- names(totals) = c('Rainfall', 'Total', 'NrOfDays')
- totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
+ rainTotals = merge(x = totalPerDay, y = nrOfDaysPerRain, by='rainData$rainGroups')
+ names(rainTotals) = c('Rainfall', 'Total', 'NrOfDays')
+ rainTotals['meanPerDay'] = round(rainTotals$Total / rainTotals$NrOfDays, 1)
  
- ggplot(totals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different temperature") + theme(plot.title = element_text(hjust = 0.5))
+ ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different temperature") + theme(plot.title = element_text(hjust = 0.5))
 
 ```
+
+
 ```{r}
 hour = as.integer(substr(data$Time, 0, 2))
 data$timeGroups = cut(hour, seq(8,20,1))
@@ -245,19 +248,29 @@ table(data$timeGroups)
 
 #Total money made per time gap
 library(dplyr)
-test = data %>%
+timeTemp = data %>%
     group_by(timeGroups, tempGroups) %>% 
     summarize(total = sum(Total) ) 
 
-ggplot(test, aes(x = timeGroups, y = total)) + geom_point() + geom_line(aes(group=tempGroups))
+names(nrOfDaysPerTemp) = c('tempGroups', 'nrOfDays')
+timeTemp = merge(x= timeTemp, y=nrOfDaysPerTemp , on='tempGroups')
+timeTemp['scaledTotal'] = timeTemp$total / timeTemp$nrOfDays
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point() + geom_line(aes(group=tempGroups))
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point() + facet_wrap(~tempGroups)
+
+
+#ggplot(test, aes(x = timeGroups, y = total)) + geom_point() + geom_line(aes(group=tempGroups))
 
 
 #average money spent by customer per transaction, note
-testMean = data %>%
-    group_by(timeGroups, tempGroups) %>% 
-    summarize(meanTotal = mean(Total) ) 
+#testMean = data %>%
+#    group_by(timeGroups, tempGroups) %>% 
+#    summarize(meanTotal = mean(Total) ) 
+#ggplot(testMean, aes(x = timeGroups, y = meanTotal)) + geom_point() + facet_wrap(~tempGroups)
 
-ggplot(testMean, aes(x = timeGroups, y = meanTotal)) + geom_point() + facet_wrap(~tempGroups)
+
+
+
 
 ```
 
