@@ -57,143 +57,24 @@ The suburb has a diverse mix of cultures with Chinese and Greek ancestory heavil
 
 ### Data Wrangling
 The below script, written by Sindri, was used to clean and combine the two datasets. The files were only available in monthly increments so they were appended with any duplicate sales. The temperature and rainfall data was then joined with the sales data and it was exported in csv form.
-```{python eval = false}
-
-# coding: utf-8
-
-# In[1]:
-
-
-import pandas as pd
-
-
-# In[15]:
-
-
-# The path to all the sales data files
-salesFiles = ['sales_39832.csv',
-'sales_73522.csv',
-'sales_40067.csv',
-'sales_50466.csv',
-'sales_74172.csv',
-'sales_88136.csv',
-'sales_90146.csv',
-'sales_51323.csv',
-'sales_43914.csv',
-'sales_15816.csv',
-'sales_32359.csv',
-'sales_31902.csv',
-'sales_29597.csv']
-
-
-# In[5]:
-
-
-# Joining up the sales data into one file
-Sales = pd.DataFrame()
-count = 0
-for filename in salesFiles:
-    name = 'data/' + filename
-    temp = pd.read_csv(name)
-    count += len(temp)
-    Sales = Sales.append(temp, ignore_index = True)
-
-
-# In[6]:
-
-
-# Saving the sales combined sales file if we need it later
-Sales.to_csv('data/TotalSales.csv')
-
-
-# In[7]:
-
-
-# Splitting the time and date up into two columns to merge the Date column with the weather data
-Sales['Time'] = Sales['Date'].apply(lambda x: x[11:])
-Sales['Date'] = Sales['Date'].apply(lambda x: x[0:10])
-
-
-# In[8]:
-
-
-# Joining up the temperature datasets from 2017 and 2018
-temperature = pd.read_csv('data/2017_tmp_data.csv')
-temp = pd.read_csv('data/2018_tmp_data.csv')
-temperature = temperature.append(temp, ignore_index = True)
-
-
-# In[9]:
-
-
-# Joining up the rainfall datasets from 2017 to 2018
-rainfall = pd.read_csv('data/Rainfall_2017.csv')
-temp = pd.read_csv('data/Rainfall_2018.csv')
-rainfall = rainfall.append(temp, ignore_index = True)
-
-
-# In[10]:
-
-
-# Combining the datasets on rainfall and temperature
-weather = temperature.merge(rainfall, on=['Year', 'Month', 'Day'])[['Year', 'Month', 'Day', 'Maximum temperature (Degree C)', 'Rainfall amount (millimetres)']]
-
-
-# In[11]:
-
-
-# The weather data had 3 columns for 'Year', 'Month' and 'Day' 
-# so they were joined into one column 'Date'
-weather['Date'] = (weather['Year'].map(str) + '-' 
-                   + weather['Month'].apply(lambda x: str(x).zfill(2)) + '-' 
-                   + weather['Day'].apply(lambda x: str(x).zfill(2)))
-
-
-# In[12]:
-
-
-# Joining up the weather data with the sales data
-total = pd.merge(Sales.drop(['Customer Name', 'Customer Code', 'Note', 'Discount', 'AccountCodeSale', 'AccountCodePurchase', 'Register', 'User', 'Status', 'Sku', 'Line Type', 'Loyalty', 'Quantity', 'Subtotal', 'Sales Tax', 'Paid'], axis=1)
-                , weather.drop(['Year', 'Month', 'Day'], axis=1)
-                , on='Date'
-                , how = 'inner')
-
-
-# In[13]:
-
-
-# Each transaction had multiple rows, one for each item, one for the total, 
-# one for any discount and an extra row if the payment was made by credit card.
-# Also there were many duplicates. This cleans all this up into a single row
-# retaining the total price.
-idx = total.groupby(['Receipt Number'])['Total'].transform(max) == total['Total']
-simplified = total[idx].drop_duplicates(subset = ['Date', 'Receipt Number', 'Total', 'Time'])
-
-
-# In[14]:
-
-
-# Save the processed data
-simplified.to_csv('data/ProcessedData.csv')
-
-
+```{r comment=''}
+cat(readLines('ProcessData.py'), sep='\n')
 ```
 
 ## Domain Knowledge
 This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. Researchers looking at Swedens distribution of SKU's determined that it was assortment of products impacts sales (Friberg & Sanctuary, 2017). It is therefore imperative that alcohol retailers
-  1. Stock the correct product
-  2. Market the correct product
-  3. Price their products effectively
+1. Stock the correct product
+2. Market the correct product
+3. Price their products effectively
+
 In the past, these decisions have been the intuition of a good business operator, however with the accessibility of data and analytics tools, we can now take a more scientific approach which can be replicated by any business.
 
 There is a wealth of evidence which shows that weather influences consumer behaviour and understanding this leads to better marketing decisions (Murray et al., 2010). The key areas of consumer behaviour this report will address are what conditions weather effects consumer spending and what conditions effect consumer behaviour. 
 
-Weather is defined by Merriam Webster as <i>the state of the atmosphere with respect to heat or cold, wetness or dryness, calm or storm, clearness or cloudiness.</i> Researchers indicate that weather alters the shoppers mood which in turn influences their purchasing behaviour.
-
-Research indicates that weather can effect consumer spending in three ways (Gaukler, 2010)
-  1. Bad weather keeps people at home reducing foot traffic and sales
-  2. Weather can influence store traffic and sales volume, and
-  3. Weather can influence sales by affecting the customers internal state.
+Weather is defined by Merriam Webster as <i>the state of the atmosphere with respect to heat or cold, wetness or dryness, calm or storm, clearness or cloudiness.</i> Researchers indicate that weather alters the shoppers mood which in turn influences their purchasing behaviour (Gaukler, 2010). They deduced that
+1. Bad weather keeps people at home reducing foot traffic and sales
+2. Weather can influence store traffic and sales volume, and
+3. Weather can influence sales by affecting the customers internal state.
 
 We will use this report to show small businesses how they can use their data to increase profitability by making informed decisions about stocking, marketing and pricing their products, helping them find the signal in the noise.
 
@@ -234,7 +115,7 @@ str(data)
 #sapply(mtcars, class)
 ```
 ## Classification of Variables
-The dataset contains `r nrow(data)` sales where each row represents 1 sale.
+The dataset contains `r nrow(data)` sales.
 We are representing the population using a small sample described above.
 We have removed columns that are not relevant to our clients use. We are using a multivariant dataset that consists of `r ncol(data)`.
 Of `r names(data)`
