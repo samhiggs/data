@@ -88,7 +88,8 @@ library(tidyr)
 library(xtable)
 library(knitr)
 data = read.csv("data/ProcessedData.csv")
-
+#Looking for data that is greater or equal to 1 dollar to remove any outlying sales
+data <- data[data$Total >= 1,]
 head(data$Date)
 #Convert date to date format
 # convert date column to date type and format to Australian date standards
@@ -111,18 +112,16 @@ dim(data)
 ## R's classification of data
 class(data)
 ## R's classification of variables
-str(data)
-#sapply(mtcars, class)
+str(data$Total)
 ```
 ## Classification of Variables
 The dataset contains `r nrow(data)` sales.
 We are representing the population using a small sample described above.
-We have removed columns that are not relevant to our clients use. We are using a multivariant dataset that consists of `r ncol(data)`.
-Of `r names(data)`
-For our research questions we will be looking at:
-  "Date", as an ordinal categorical measurement representing days in a week, months in a year and     seasons in a year. The min is 
-  "Total", 
- 
+We have removed columns that are not relevant to our clients use. We are using a multivariant dataset that consists of `r ncol(data)` variables.
+<br>
+`r names(data)`
+<br>
+Each variable is classified at the beginning of the research question.
 
 ## Stakeholders
 ### Customer - Indirect External Stakeholder
@@ -145,30 +144,51 @@ Our tutor and the University of Sydney are our primary and Secondary stakeholder
 # Research Questions
 <br>
 
-## Research Question 1
+## RQ1: How does the maximum temperature effect transaction value?
 
-How does the maximum temperature affect the consumer decision when purcahsing alcohol?
+### Introduction
+The amount spent per transaction is a useful indicator for retailers to determine how much stock to buy. If a retailer purchases to much stock, they may not have the cash flow to pay it back, to little and customers will not be able to buy the products they want. 
 
-Let us first see some general information about out heat variables.
+We displayed this data using a bar graph to represent the average sale value in each temperature range. The value Inside each bar is the number of transactions. As you can see, the lower and upper temperature ranges have less transactions because there are less days. 
+
+We acknowledge that the limited number of transactions can skew the accuracy of the data in these ranges.
+
+### Classification of Variables
+The below table contains a meta-analysis of temperature in our dataset. The temperature is represented by the maximum temperature of that day in degrees celcius.
+
 
 ```{r}
 #The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
 temp = data$Maximum.temperature..Degree.C.
 data$tempGroups = cut(temp, c(10,15,20,25,30,35,40,45))
-
 #Take a look at overall data before looking at the graphs
 heatData = data %>% drop_na(Maximum.temperature..Degree.C.)
 
-dataFrame <- data.frame(Rows = c(nrow(data)-nrow(heatData)),
-                        Max = c(max(temp)),
+dataFrame <- data.frame(Name = "Daily Max Temp",
+                        Rows = c(nrow(data)-nrow(heatData)),
+                        Class = c(class(temp)),
                         Min = c(min(temp)),
+                        Max = c(max(temp)),
                         Mean = c(mean(temp)),
                         Median = c(median(temp)))
 
-kable(dataFrame, col.names = c("Missing rows", "Max heat", "Min heat", "Mean maximum heat", "Median of maximum heat"))
+#Do the same for the sales data
+sales = data$Total
+salesData = data %>% drop_na(Total)
+salesFrame <- data.frame(Name = "Sales",
+                         Rows = c(nrow(data) - nrow(salesData)),
+                         Class = c(class(temp)),
+                         Min = c(min(sales)),
+                         Max = c(max(sales)),
+                         Mean = c(mean(sales)),
+                         Median = c(median(sales))
+                         )
+newdf <- rbind(dataFrame, salesFrame)
+kable(newdf, caption= "Variable Data Classification", col.names = c("Name"," Missing", "Type", "Minimum", "Maximum", "Mean", "Median"))
 ```
 
-Lets start at looking at how much a person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represents the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe a spike at the 35-40 degrees temperature range suggesting that people tend to spend more money per transaction when the temperature is between 35 and 40 degrees.
+### Graphs
+we can see from the below bar graph that people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe a spike at the 35-40 degrees temperature range suggesting that people tend to spend more money per transaction when the temperature is between 35 and 40 degrees.
 ```{r}
 #Transaction sizes for each temperature range
 meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
@@ -181,11 +201,11 @@ colnames(Fre)[1] <- "tempGroups"
 Fre$lab <- as.character(Fre$Freq)
 
 #Barplot for average money spent with median lines
-ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average sale by temperature") + ylab("Dollars (AUD)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
 
 ```
 
-Let us look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn't sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees. 
+The below graph looks at the Total daily sales in different temperature ranges. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn't sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees. 
 
 ```{r}
  
@@ -196,7 +216,7 @@ Let us look at what an average day looks like in total sales for each temperatur
  names(totals) = c('Temperature', 'Total', 'NrOfDays')
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
  
- ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average money spent (dollars) in one day for different temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+ ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average Daily Sales by Temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
  
 ```
 
@@ -205,13 +225,9 @@ Looking at the values of the median and mean purchase transactions it becomes ev
 
 Looking at the data for the total money earned per day for the shop for the different temperature ranges we note that there is a steady increase in sales the hotter it gets from 20-40 degrees. It is also worth noting that even though each transacton is comparatively small for the 30-35 temperature range the total sales are high suggesting that for the hotter temperature people buy less at a time but more people buy alcohol. 
 
-## Research Question 2
-How does rainfall affect the consumer decision when purchasing alcohol?
+## RQ2 How does rainfall affect Sales?
 
-
-Let's first see some general information about out the rainfall data in Sydney.
-
-
+### Classification of Variables
 ```{r}
 rainData = data %>% drop_na(Rainfall.amount..millimetres.)
 rain = rainData$Rainfall.amount..millimetres.
