@@ -149,7 +149,7 @@ Our tutor and the University of Sydney are our primary and Secondary stakeholder
 
 How does the maximum temperature affect the consumer decision when purcahsing alcohol?
 
-Let?s first see some general information about out heat variables.
+Let us first see some general information about out heat variables.
 
 ```{r}
 #The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
@@ -168,7 +168,7 @@ dataFrame <- data.frame(Rows = c(nrow(data)-nrow(heatData)),
 kable(dataFrame, col.names = c("Missing rows", "Max heat", "Min heat", "Mean maximum heat", "Median of maximum heat"))
 ```
 
-Lets start at looking at how much a person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represents the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe some sort of spike in the bar chart. People tend to spend more money when the temperature is between 35 and 40 degrees.
+Lets start at looking at how much a person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represents the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe a spike at the 35-40 degrees temperature range suggesting that people tend to spend more money per transaction when the temperature is between 35 and 40 degrees.
 ```{r}
 #Transaction sizes for each temperature range
 meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
@@ -185,7 +185,7 @@ ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(
 
 ```
 
-Lets look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn?t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
+Let us look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn't sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees. 
 
 ```{r}
  
@@ -201,27 +201,21 @@ Lets look at what an average day looks like in total sales for each temperature 
 ```
 
 ### Summary
-Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However, the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definite drop in the amount of money spent per purchase. During the very hottest periods 40-45 degrees there is also a massive drop in the amount spent on each transaction. However, it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occurred at the 35-40 temperature range. This could be because people drink more alcohol, however, these would be regular temperatures during the summer break time when people are on vacation and are hence drinking more alcohol in general.
+Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in the size of each transaction for the temperature ranges 15-30 degrees. The more extreme temperature values have more of an effect showing big drops in transaction sizes, however, it is worth noting that there were very few transactions during that time so the data might not be accurately represent the consumer behaviour. The most noticable spike in transaction sizes occurs at the 35-40 degree temperature range. This could represented by people buying more alcohol at a time during the hot days of summer breaks when going travelling or having barbecues.
+
+Looking at the data for the total money earned per day for the shop for the different temperature ranges we note that there is a steady increase in sales the hotter it gets from 20-40 degrees. It is also worth noting that even though each transacton is comparatively small for the 30-35 temperature range the total sales are high suggesting that for the hotter temperature people buy less at a time but more people buy alcohol. 
 
 ## Research Question 2
 How does rainfall affect the consumer decision when purchasing alcohol?
 
-There are a few days for which we do not have rain data so we start by removing those rows. We then take a better look at the rain data Let's start by taking a better look at the rainfall data
+
+Let´s first see some general information about out the rainfall data in Sydney.
+
+
 ```{r}
 rainData = data %>% drop_na(Rainfall.amount..millimetres.)
 rain = rainData$Rainfall.amount..millimetres.
 
-dataFrame <- data.frame(Rows = c(nrow(data)-nrow(rainData)),
-                        Max = c(max(rain)),
-                        Min = c(min(rain)),
-                        Mean = c(mean(rain)),
-                        Median = c(median(rain)))
-
-kable(dataFrame, caption = "Fuck yeah", col.names = c("Missing rows", "Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
-
-```
-
-```{r}
 #We start by changing the rainfall from a quantitative variable to a qualitative one
 rainData$rainGroups = cut(rain, c(0,0.1,15,70), include.lowest = TRUE)
 
@@ -231,20 +225,30 @@ medPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, data, median)
 transactions = merge(x = meanPerPerson, y = medPerPerson, by='rainData$rainGroups')
 names(transactions) = c('Rainfall', 'Mean_total', 'Median_total')
 
-FreRain <- as.data.frame(table(rainData$rainGroups))
-colnames(FreRain)[1] <- "rainGroups" 
 
+dataFrame <- data.frame(Rows = c(nrow(data)-nrow(rainData)),
+                        Max = c(max(rain)),
+                        Min = c(min(rain)),
+                        Mean = c(mean(rain)),
+                        Median = c(median(rain)))
 
+kable(dataFrame, col.names = c("Missing rows", "Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
+
+#Number of transactions for each rainfall range
+ ggplot(rainData, aes(rainGroups)) + geom_bar() + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Number of transactions") + xlab("Rainfall") + theme_bw() + ggtitle("Number of total transaction for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+We decided to split up our raindata into 3 categories, No rain, light rain (0 - 15 mm) and heavy rain (15 - 70 mm) because as we can see from the bar plot we have alot more of datapoints for no rain and light rain than heavy rain. So instead of making many categories for different rainfall we only made three for the most accurate results. We can also see from the table above there are few missing rows. That can be explained by bad or missing values. 
+
+Lets start at looking at how much a person spends in the store on average. As we can see from this bar plot there is not much of a difference between these categories but some difference though. People tend to spend a little bit more per purchase as the rainfall increases. 
+```{r}
 #Barplot for average money spent with median lines
-ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = FreRain$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain'))
+ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + scale_x_discrete(labels = c('No rain','Light rain', 'heavy rain'))
+```
 
-
- #Number of transactions for each rainfall range
- ggplot(rainData, aes(rainGroups)) + geom_bar() + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Number of transactions") + xlab("Rainfall") + theme_bw() + ggtitle("Number of total transaction for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
- 
- FreRain
- 
- 
+Lets look at what an average day looks like in total sales for rainfall in Sydney. This bar plot does not tell us the same story as the previous one. We can see that the store sells more alcohol if there is light rain as we saw above but when there is raining heavily the store sells less alcohol. 
+```{r}
  #Total money spent for each temperature range
  totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
  nrOfDaysPerRain = aggregate(rainData$Date ~ rainData$rainGroups, rainData, function(x) length(unique(x)))
@@ -252,16 +256,11 @@ ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", posi
  names(rainTotals) = c('Rainfall', 'Total', 'NrOfDays')
  rainTotals['meanPerDay'] = round(rainTotals$Total / rainTotals$NrOfDays, 1)
  
- ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different temperature") + theme(plot.title = element_text(hjust = 0.5))
-
+  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','Small rain', 'Heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
-### Summary 
--	There many more transactions on days that are not raining can be attributed to the fact that there are many more sunny days in Sydney than rainy days
--	People buy a little bit more when it rains.
--	The average money spent per transaction only rises slightly when there is any rain. 
--	This may be because the store is located in a shopping centre. Maybe this would be different for stores that aren't in a shopping centre.
-
+Summary: 
+Looking and comparing these two graphs we can see a little trend in alcohol sales. When there are days of light rain people tend to spend more per transaction and the store sells more per day compared to days with no rain at all. We think that it might be because of when there is sunshine outside and good weather people are more likely to drink alcohol in a bar but when it is a day with light rain people are more likely to the shop to buy their alcohol. Another reason for this might be that on light rainy days people tend to do more grocery shopping and since the alcohol store is in a shopping centre it's convenient for people to go also to the alcohol shop. However, if we take a look at days when it rains heavily people tend to spend more per transaction, but the store sells less per day. We think that might be because it rains so heavily that not many people go outside so less people go to the alcohol store but if people go outside they tend to buy more per transaction. In conclusion people buy more per transaction when it rains but the store only generates more revenue when there are days with light rain than days with heavy rain or no rain at all. 
 
 
 ## Research Question 3
