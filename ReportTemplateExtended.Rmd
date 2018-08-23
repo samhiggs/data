@@ -1,9 +1,6 @@
 ---
 title: "Reproducible Report Template - Basic"
-author: "Student/s SID"
-=======
 author: "Sam Higgs | 4404 5555 8, Anthony Simmon | 480383930, Ivar Orn Kristjansson | 480539753"
->>>>>>> e986b59d07473bb2795680e41ed9d49b05cbb9d3
 subtitle: "Project 1"
 date: "University of Sydney | Data1001 | August 2018"
 # You can change the title, subtitle, author etc.
@@ -28,7 +25,7 @@ output:
     #This allows toc to update relative to your location as you scroll down the html page.
     code_folding: hide
     #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you 
-
+---
 <br>
 
 # Executive Summary
