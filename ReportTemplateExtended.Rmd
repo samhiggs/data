@@ -43,18 +43,19 @@ max 400 words
 
 <br>
 
-<br>
-# Full Report
+# Initial Data Analysis (IDA)
+## Source of Data
+This report combines sales data from an off-premise liquor store and weather data from the Bureau of Meteorology. 
+The liquor store is called The Drink Hive (http://www.thedrinkhive.com.au/). It is located in a small up-market shopping centre called Saporium in Rosebery, NSW Australia. The sales data is primary data source pulled straight from the POS software Vend (https://www.vendhq.com/). It quantitatively measures time of sale, number of items sold and price whilst also measuring categories such as staff-member and product type. This allows us to objective measurements assuming that all transactions have been processed (which we have been assured have). We acknowledge that this is a small sample and does not necessarily represent the trends of the Australian consumer. The limitation of this data is that it only reflects one store and the trends of customers to that store. 
 
-## Initial Data Analysis (IDA)
-### Source of Data
-This report uses data from an off-premise liquor store called The Drink Hive in a small up-market shopping centre called Saporium in Rosebery, NSW Australia. 
+The second dataset is weather data obtained from from the Bureau of Meteorology (BOM) (http://www.bom.gov.au/climate/data/) website. We chose BOM as they provide the most accurate and detailed quantitative measure of temperature per day available in Australia. This secondary data is openly available on their website. They are the primary source of this data and we trust that this data is accurate. Possible issues we may have with this data include temperature variations within one day. Because transactions occur at different periods throughout a day, and there are often fluctuations in temperature throughout a day, it may alter the results.
 
-#### Rosebery Demographic
+
+### Rosebery Demographic
 Rosebery has a population of approximately 10,000 with a median age of 33 and 2,500 families. The median weekly income is $1,900 and weekly rent is $580. 34% of residents have a university or tertiary education which is twice that of NSW average and 67% work full-time. 58% of the population live in flats or apartments.
 The suburb has a diverse mix of cultures with Chinese and Greek ancestory heavily over-represented compared to the NSW Average. 63% of the population's parents were both born overseas, just under double the NSW average. Eastern orthodox over-represented and Anglican under-represented.(ABS, 2016)
 
-### Domain Knowledge
+## Domain Knowledge
 This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. It is therefore imperative that they
   1. Stock the correct product
   2. Market the correct product
@@ -63,7 +64,7 @@ In the past, these decisions have been the intuition of a good business operator
 
 There is a wealth of evidence which shows that weather influences consumer behaviour and understanding this leads to better marketing decisions (Murray et al, 2010). The key areas of consumer behaviour this report will address are what conditions weather effects consumer spending and what conditions effect consumer behaviour. 
 
-Weather is defined by Merriam  as <i>the state of the atmosphere with respect to heat or cold, wetness or dryness, calm or storm, clearness or cloudiness.<\i> Researchers indicate that weather alters the shoppers mood. 
+Weather is defined by Merriam  as <i>the state of the atmosphere with respect to heat or cold, wetness or dryness, calm or storm, clearness or cloudiness.</i> Researchers indicate that weather alters the shoppers mood. 
 
 Research indicates that weather can effect consumer spending in three ways
   1. Bad weather keeps people at home reducing foot traffic and sales
@@ -108,8 +109,8 @@ class(data)
 str(data)
 #sapply(mtcars, class)
 ```
-### Classification of Variables
-The dataset contains `r nrow(data) - 1` sales where each row represents 1 sale.
+## Classification of Variables
+The dataset contains `r nrow(data)` sales where each row represents 1 sale.
 We are representing the population using a small sample described above.
 We have removed columns that are not relevant to our clients use. We are using a multivariant dataset that consists of `r ncol(data)`.
 Of `r names(data)`
@@ -118,36 +119,26 @@ For our research questions we will be looking at:
   "Total", 
  
 
-### Stakeholders
-#### Customer - Indirect External Stakeholder
+## Stakeholders
+### Customer - Indirect External Stakeholder
 The owner of The Drink Hive, Mal Higgs is a customer. He will receive this report and be able to act on its recommendations. Mal has over 40 years experience in retail liquor and therefore has a strong intuition and has made his own hypotheses/predictions as to the outcome. He came to us as he does not have a mathematical nor statistical background and his Point Of Sale (POS) software does not help with his marketing campaign. Mal is a useful resource for questions about retail and the customer however we must take care not to be bias and assess the data objectively. We must also present the report in a way that a non-technical person can understand.
 
-#### Project Team - Direct Internal Stakeholder
+### Project Team - Direct Internal Stakeholder
 The project tea is made up of Anthony, Science Major, Sindi, Ivan and Sam who are Computer Science majors. We have decided to break up the team into their strenghts and backgrounds whilst also cross-checking each other to ensure that every member of the team learns and we can challenge each others thinking. Each member of the project team will be working on the research questions presented as well as focusing on the below areas of the report.
 
 Sam has a background in business and data analytics. He will focus on the Initial Data Analysis. He must be aware of the limitations of his understanding of data science to ensure the relevant variables are used. 
 Anthony has a strong critical thinking mind and a background in scientific literature. He will focus on the evidence based conclusions, compilation and presentation of the report. He must be must be aware of his non-technical audience to present the findings in a way that can be understood by a small business owner.
 Sindri and Ivar have backgrounds in Computer Science. They will be combining and wrangling the datasets into a useable table and lead the data representations found in this report. They will be ensuring the numerical and graphical summaries are insightful and relevant. They must ensure the correct data points and graphical representations are used to portray the questions being researched.
 
-We have a fantastic breadth of knowledge that will make this report a valuable and useful tool to Mal.
+We have a fantastic breadth of knowledge that will make this report a valuable and useful tool for Mal and other small business retail owners.
 
-#### Sponsor - Primary & Secondary Stakeholder
+### Sponsor - Primary & Secondary Stakeholder
 Our tutor and the University of Sydney are our primary and Secondary stakeholder. They assist in our vision and are responsible for the overall success of the project. They will review our submission and have created specific outcomes that we will be measured against. We must be careful to meet the requirements for this stakeholder or they will fail us and we will not be able to continue to report and continue working. 
 
 ## Summary
 
-- The data came from two different sources. The weather data came in two different data sets from the [Bureau of Meteorology] (http://www.bom.gov.au/climate/data/) website and the sale data of alcoholic beverages came from a local store in Sydney. We are using data from both resources and combining the into one big dataset. a
-- The data is/is not valid because 
-  The data is valid because we are getting 
-- Possible issues include ...
-- Each row represents ...
-- Each column represents ...
-
+# Research Questions
 <br>
-
-##IDA
-Complexity of data:
- We are looking at a dataset with len(names())
 
 ## Research Question 1
 
@@ -260,7 +251,7 @@ ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", posi
 
 ```
 
-Summary: 
+### Summary 
 -	There many more transactions on days that are not raining can be attributed to the fact that there are many more sunny days in Sydney than rainy days
 -	People buy a little bit more when it rains.
 -	The average money spent per transaction only rises slightly when there is any rain. 
@@ -307,17 +298,13 @@ ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point() + facet_wr
 ```
 
 
-Summary: 
-
+### Summary: 
+TO DO:
 <br>
-
-## Research Question 4
-
-TODO:
 
 # Conclusions
 
-Insert text.
+TODO:
 
 <br>
 
@@ -325,9 +312,13 @@ Insert text.
 
 Australian Bureau of Statistics, 2016, 2016 Census QuickStats, Rosebery. viewed 21/08/2018 http://quickstats.censusdata.abs.gov.au/census_services/getproduct/census/2016/quickstat/SSC13405?opendocument
 
+Gaukler, G. M. (2010). Preventing avoidable stockouts: The impact of item-level RFID in retail. Journal of Business & Industrial Marketing, 25(8), 572-581. doi:10.1108/08858621011088301 
+
 Kyle B. Murray, Fabrizio Di Muro, Adam Finn, Peter Popkowski Leszczyc, 2010. The effect of weather on consumer spending. Journal of Retailing and Consumer Services (17) 512-520
 
 Weather. (n.d) In Merriam-Websters Collegiate Dictionary. Retrieved from https://www.merriam-webster.com/dictionary/weather
+
+
 
 <br>
 
