@@ -129,10 +129,10 @@ Each variable is classified at the beginning of the research question.
 The owner of The Drink Hive, Mal Higgs is a customer. He will receive this report and be able to act on its recommendations. Mal has over 40 years experience in retail liquor and therefore has a strong intuition and has made his own hypotheses/predictions as to the outcome. He came to us as he does not have a mathematical nor statistical background and his Point Of Sale (POS) software does not help with his marketing campaign. Mal is a useful resource for questions about retail and the customer however we must take care not to be bias and assess the data objectively. We must also present the report in a way that a non-technical person can understand.
 
 ### Project Team - Direct Internal Stakeholder
-The project tea is made up of Anthony, Science Major, Sindi, Ivan and Sam who are Computer Science majors. We have decided to break up the team into their strenghts and backgrounds whilst also cross-checking each other to ensure that every member of the team learns and we can challenge each others thinking. Each member of the project team will be working on the research questions presented as well as focusing on the below areas of the report.
+The project tea is made up of Anthony, Science Major, Sindi, Ivar and Sam who are Computer Science majors. We have decided to break up the team into their strenghts and backgrounds whilst also cross-checking each other to ensure that every member of the team learns and we can challenge each others thinking. Each member of the project team will be working on the research questions presented as well as focusing on the below areas of the report.
 
 Sam has a background in business and data analytics. He will focus on the Initial Data Analysis. He must be aware of the limitations of his understanding of data science to ensure the relevant variables are used. 
-Anthony has a strong critical thinking mind and a background in scientific literature. He will focus on the evidence based conclusions, compilation and presentation of the report. He must be must be aware of his non-technical audience to present the findings in a way that can be understood by a small business owner.
+Anthony has a strong critical thinking mind and a background in scientific literature. He will focus on the evidence based conclusions, compilation and presentation of the report. He must be aware of his non-technical audience to present the findings in a way that can be understood by a small business owner.
 Sindri and Ivar have backgrounds in Computer Science. They will be combining and wrangling the datasets into a useable table and lead the data representations found in this report. They will be ensuring the numerical and graphical summaries are insightful and relevant. They must ensure the correct data points and graphical representations are used to portray the questions being researched.
 
 We have a fantastic breadth of knowledge that will make this report a valuable and useful tool for Mal and other small business retail owners.
@@ -230,7 +230,7 @@ Looking at the values of the median and mean purchase transactions it becomes ev
 
 Looking at the data for the total money earned per day for the shop for the different temperature ranges we note that there is a steady increase in sales the hotter it gets from 20-40 degrees. It is also worth noting that even though each transacton is comparatively small for the 30-35 temperature range the total sales are high suggesting that for the hotter temperature people buy less at a time but more people buy alcohol. 
 
-## RQ2 How does rainfall affect Sales?
+## RQ2: How does rainfall affect Sales?
 
 ### Classification of Variables
 ```{r}
@@ -277,14 +277,14 @@ Lets look at what an average day looks like in total sales for rainfall in Sydne
  names(rainTotals) = c('Rainfall', 'Total', 'NrOfDays')
  rainTotals['meanPerDay'] = round(rainTotals$Total / rainTotals$NrOfDays, 1)
  
-  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + scale_x_discrete(labels = c('No rain','Small rain', 'Heavy rain')) + ylab("Sales (AUD)") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (AUD) in one day for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
+  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Sales (AUD)") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (AUD) in one day for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
 Summary: 
 Looking and comparing these two graphs we can see a little trend in alcohol sales. When there are days of light rain people tend to spend more per transaction and the store sells more per day compared to days with no rain at all. We think that it might be because of when there is sunshine outside and good weather people are more likely to drink alcohol in a bar but when it is a day with light rain people are more likely to the shop to buy their alcohol. Another reason for this might be that on light rainy days people tend to do more grocery shopping and since the alcohol store is in a shopping centre it's convenient for people to go also to the alcohol shop. However, if we take a look at days when it rains heavily people tend to spend more per transaction, but the store sells less per day. We think that might be because it rains so heavily that not many people go outside so less people go to the alcohol store but if people go outside they tend to buy more per transaction. In conclusion people buy more per transaction when it rains but the store only generates more revenue when there are days with light rain than days with heavy rain or no rain at all. 
 
 
-## RQ3 How does maximum temperature effect alcohol sales throughout the day?
+## RQ3: How does maximum temperature effect alcohol sales throughout the day?
 ### Classification of Variables
 
 ```{r}
@@ -326,7 +326,10 @@ The first trend worth noting is that for normal maximum temperature ranges (15-3
 
 # Conclusions
 
-TODO:
+Temperature, rainfall and time of day seem to have noticable effect on sales in a local alcohol store in Sydney.
+Temperature seems to have the most impact on sales of alcoholic drinks. People tend to buy more per purchase and the store sells more in milder temperatures (15 - 14 degrees) than more extreme temperatures (10 - 15 and 40 - 45 degrees). A noticable spike is also seen in both graphs for 35 - 40 degrees. Weather during summer break and holidays is often around that range which could explain the spike. 
+Rainfall does not have as much noticable impact on sales as temperature did. Light rain seems to have more impact than heavy rain and no rain at all on sales of alcoholic drinks. People spend a most per transaction when there is heavy rain but the difference is though not much between the data sets. However, when there is light rain the store sells more on the average day with much more noticable difference. 
+
 
 <br>
 
