@@ -24,9 +24,7 @@ output:
     toc_float: true
     #This allows toc to update relative to your location as you scroll down the html page.
     code_folding: hide
-    #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you open the document
-    
-    # More information: http://rmarkdown.rstudio.com/html_document_format.html
+    #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you 
 ---
 
 <br>
@@ -45,40 +43,164 @@ max 400 words
 
 <br>
 
-<br>
-# Full Report
+# Initial Data Analysis (IDA)
+## Source of Data
+This report combines sales data from an off-premise liquor store and weather data from the Bureau of Meteorology. 
+The liquor store is called The Drink Hive (http://www.thedrinkhive.com.au/). It is located in a small up-market shopping centre called Saporium in Rosebery, NSW Australia. The sales data is primary data source pulled straight from the POS software Vend (https://www.vendhq.com/). It quantitatively measures time of sale, number of items sold and price whilst also measuring categories such as staff-member and product type. This allows us to objective measurements assuming that all transactions have been processed (which we have been assured have). We acknowledge that this is a small sample and does not necessarily represent the trends of the Australian consumer. The limitation of this data is that it only reflects one store and the trends of customers to that store. 
 
-## Initial Data Analysis (IDA)
-### Source of Data
-This report uses data from an off-premise liquor store in a small up-market shopping centre called Saporium in Rosebery, NSW Australia. 
+The second dataset is weather data obtained from from the Bureau of Meteorology (BOM) (http://www.bom.gov.au/climate/data/) website. We chose BOM as they provide the most accurate and detailed quantitative measure of temperature per day available in Australia. This secondary data is openly available on their website. They are the primary source of this data and we trust that this data is accurate. Possible issues we may have with this data include temperature variations within one day. Because transactions occur at different periods throughout a day, and there are often fluctuations in temperature throughout a day, it may alter the results.
 
-#### Rosebery Demographic
+
+### Rosebery Demographic
 Rosebery has a population of approximately 10,000 with a median age of 33 and 2,500 families. The median weekly income is $1,900 and weekly rent is $580. 34% of residents have a university or tertiary education which is twice that of NSW average and 67% work full-time. 58% of the population live in flats or apartments.
 The suburb has a diverse mix of cultures with Chinese and Greek ancestory heavily over-represented compared to the NSW Average. 63% of the population's parents were both born overseas, just under double the NSW average. Eastern orthodox over-represented and Anglican under-represented.(ABS, 2016)
 
-### Domain Knowledge
-This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. Lots of small businesses fail due to incorrect product placement, marketing or pricing. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. It is therefore imperative that they
-  1. stock the correct product
+### Data Wrangling
+The below script, written by Sindri, was used to clean and combine the two datasets. The files were only available in monthly increments so they were appended with any duplicate sales. The temperature and rainfall data was then joined with the sales data and it was exported in csv form.
+```{python eval = false}
+
+# coding: utf-8
+
+# In[1]:
+
+
+import pandas as pd
+
+
+# In[15]:
+
+
+# The path to all the sales data files
+salesFiles = ['sales_39832.csv',
+'sales_73522.csv',
+'sales_40067.csv',
+'sales_50466.csv',
+'sales_74172.csv',
+'sales_88136.csv',
+'sales_90146.csv',
+'sales_51323.csv',
+'sales_43914.csv',
+'sales_15816.csv',
+'sales_32359.csv',
+'sales_31902.csv',
+'sales_29597.csv']
+
+
+# In[5]:
+
+
+# Joining up the sales data into one file
+Sales = pd.DataFrame()
+count = 0
+for filename in salesFiles:
+    name = 'data/' + filename
+    temp = pd.read_csv(name)
+    count += len(temp)
+    Sales = Sales.append(temp, ignore_index = True)
+
+
+# In[6]:
+
+
+# Saving the sales combined sales file if we need it later
+Sales.to_csv('data/TotalSales.csv')
+
+
+# In[7]:
+
+
+# Splitting the time and date up into two columns to merge the Date column with the weather data
+Sales['Time'] = Sales['Date'].apply(lambda x: x[11:])
+Sales['Date'] = Sales['Date'].apply(lambda x: x[0:10])
+
+
+# In[8]:
+
+
+# Joining up the temperature datasets from 2017 and 2018
+temperature = pd.read_csv('data/2017_tmp_data.csv')
+temp = pd.read_csv('data/2018_tmp_data.csv')
+temperature = temperature.append(temp, ignore_index = True)
+
+
+# In[9]:
+
+
+# Joining up the rainfall datasets from 2017 to 2018
+rainfall = pd.read_csv('data/Rainfall_2017.csv')
+temp = pd.read_csv('data/Rainfall_2018.csv')
+rainfall = rainfall.append(temp, ignore_index = True)
+
+
+# In[10]:
+
+
+# Combining the datasets on rainfall and temperature
+weather = temperature.merge(rainfall, on=['Year', 'Month', 'Day'])[['Year', 'Month', 'Day', 'Maximum temperature (Degree C)', 'Rainfall amount (millimetres)']]
+
+
+# In[11]:
+
+
+# The weather data had 3 columns for 'Year', 'Month' and 'Day' 
+# so they were joined into one column 'Date'
+weather['Date'] = (weather['Year'].map(str) + '-' 
+                   + weather['Month'].apply(lambda x: str(x).zfill(2)) + '-' 
+                   + weather['Day'].apply(lambda x: str(x).zfill(2)))
+
+
+# In[12]:
+
+
+# Joining up the weather data with the sales data
+total = pd.merge(Sales.drop(['Customer Name', 'Customer Code', 'Note', 'Discount', 'AccountCodeSale', 'AccountCodePurchase', 'Register', 'User', 'Status', 'Sku', 'Line Type', 'Loyalty', 'Quantity', 'Subtotal', 'Sales Tax', 'Paid'], axis=1)
+                , weather.drop(['Year', 'Month', 'Day'], axis=1)
+                , on='Date'
+                , how = 'inner')
+
+
+# In[13]:
+
+
+# Each transaction had multiple rows, one for each item, one for the total, 
+# one for any discount and an extra row if the payment was made by credit card.
+# Also there were many duplicates. This cleans all this up into a single row
+# retaining the total price.
+idx = total.groupby(['Receipt Number'])['Total'].transform(max) == total['Total']
+simplified = total[idx].drop_duplicates(subset = ['Date', 'Receipt Number', 'Total', 'Time'])
+
+
+# In[14]:
+
+
+# Save the processed data
+simplified.to_csv('data/ProcessedData.csv')
+
+
+```
+
+## Domain Knowledge
+This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. Researchers looking at Swedens distribution of SKU's determined that it was assortment of products impacts sales (Friberg & Sanctuary, 2017). It is therefore imperative that alcohol retailers
+  1. Stock the correct product
   2. Market the correct product
   3. Price their products effectively
-In the past, these decisions have been the intuition of a good business operator however with the accessibility of data and analytics tools we can now take a more scientific approach which can be replicated by any business.
+In the past, these decisions have been the intuition of a good business operator, however with the accessibility of data and analytics tools, we can now take a more scientific approach which can be replicated by any business.
 
-There is a wealth of evidence that shows that weather influences consumer behaviour and understanding this leads to better marketing decisions (Murray et al, 2010). The key areas of consumer behaviour this report will address are what conditions weather effects consumer spending and what conditions effect consumer behaviour. 
+There is a wealth of evidence which shows that weather influences consumer behaviour and understanding this leads to better marketing decisions (Murray et al., 2010). The key areas of consumer behaviour this report will address are what conditions weather effects consumer spending and what conditions effect consumer behaviour. 
 
-Weather is defined as ______. Researchers indicate that weather alters the shoppers mood. 
+Weather is defined by Merriam Webster as <i>the state of the atmosphere with respect to heat or cold, wetness or dryness, calm or storm, clearness or cloudiness.</i> Researchers indicate that weather alters the shoppers mood which in turn influences their purchasing behaviour.
 
-Research indicates that weather can effect consumer spending in three ways
+Research indicates that weather can effect consumer spending in three ways (Gaukler, 2010)
   1. Bad weather keeps people at home reducing foot traffic and sales
   2. Weather can influence store traffic and sales volume, and
   3. Weather can influence sales by affecting the customers internal state.
-
-
 
 We will use this report to show small businesses how they can use their data to increase profitability by making informed decisions about stocking, marketing and pricing their products, helping them find the signal in the noise.
 
 
 ```{r}
-
+#This prevents strings from being factorised which keeps Date as Date
+options(stringsAsFactors = FALSE)
 # LOAD DATA
 library(ggplot2)
 library(tidyr)
@@ -86,7 +208,19 @@ library(xtable)
 library(knitr)
 data = read.csv("data/ProcessedData.csv")
 
+head(data$Date)
+#Convert date to date format
+# convert date column to date type and format to Australian date standards
+data$Date <- format(as.Date(data$Date), "%d-%m-%Y")
 
+# view R class of data
+class(data$DATE)
+## [1] "Date"
+
+# view results
+head(data$DATE)
+## [1] "2013-08-21" "2013-08-26" "2013-08-27" "2013-09-01" "2013-09-09"
+## [6] "2013-09-10"
 # Quick look at top 6 rows of data
 head(data)
 
@@ -99,28 +233,42 @@ class(data)
 str(data)
 #sapply(mtcars, class)
 ```
-### Classification of Variables
+## Classification of Variables
 The dataset contains `r nrow(data)` sales where each row represents 1 sale.
-Summary:
+We are representing the population using a small sample described above.
+We have removed columns that are not relevant to our clients use. We are using a multivariant dataset that consists of `r ncol(data)`.
+Of `r names(data)`
+For our research questions we will be looking at:
+  "Date", as an ordinal categorical measurement representing days in a week, months in a year and     seasons in a year. The min is 
+  "Total", 
+ 
 
-- The data came from two different sources. The weather data came in two different data sets from the [Bureau of Meteorology] (http://www.bom.gov.au/climate/data/) website and the sale data of alcoholic beverages came from a local store in Sydney. We are using data from both resources and combining the into one big dataset. a
-- The data is/is not valid because 
-  The data is valid because we are getting 
-- Possible issues include ...
-- Each row represents ...
-- Each column represents ...
+## Stakeholders
+### Customer - Indirect External Stakeholder
+The owner of The Drink Hive, Mal Higgs is a customer. He will receive this report and be able to act on its recommendations. Mal has over 40 years experience in retail liquor and therefore has a strong intuition and has made his own hypotheses/predictions as to the outcome. He came to us as he does not have a mathematical nor statistical background and his Point Of Sale (POS) software does not help with his marketing campaign. Mal is a useful resource for questions about retail and the customer however we must take care not to be bias and assess the data objectively. We must also present the report in a way that a non-technical person can understand.
 
+### Project Team - Direct Internal Stakeholder
+The project tea is made up of Anthony, Science Major, Sindi, Ivan and Sam who are Computer Science majors. We have decided to break up the team into their strenghts and backgrounds whilst also cross-checking each other to ensure that every member of the team learns and we can challenge each others thinking. Each member of the project team will be working on the research questions presented as well as focusing on the below areas of the report.
+
+Sam has a background in business and data analytics. He will focus on the Initial Data Analysis. He must be aware of the limitations of his understanding of data science to ensure the relevant variables are used. 
+Anthony has a strong critical thinking mind and a background in scientific literature. He will focus on the evidence based conclusions, compilation and presentation of the report. He must be must be aware of his non-technical audience to present the findings in a way that can be understood by a small business owner.
+Sindri and Ivar have backgrounds in Computer Science. They will be combining and wrangling the datasets into a useable table and lead the data representations found in this report. They will be ensuring the numerical and graphical summaries are insightful and relevant. They must ensure the correct data points and graphical representations are used to portray the questions being researched.
+
+We have a fantastic breadth of knowledge that will make this report a valuable and useful tool for Mal and other small business retail owners.
+
+### Sponsor - Primary & Secondary Stakeholder
+Our tutor and the University of Sydney are our primary and Secondary stakeholder. They assist in our vision and are responsible for the overall success of the project. They will review our submission and have created specific outcomes that we will be measured against. We must be careful to meet the requirements for this stakeholder or they will fail us and we will not be able to continue to report and continue working. 
+
+## Summary
+
+# Research Questions
 <br>
-
-##IDA
-Complexity of data:
- We are looking at a dataset with len(names())
 
 ## Research Question 1
 
 How does the maximum temperature affect the consumer decision when purcahsing alcohol?
 
-Let´s first see some general information about out heat variables.
+Let?s first see some general information about out heat variables.
 
 ```{r}
 #The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
@@ -156,7 +304,7 @@ ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(
 
 ```
 
-Lets look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn´t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
+Lets look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn?t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
 
 ```{r}
  
@@ -171,14 +319,15 @@ Lets look at what an average day looks like in total sales for each temperature 
  
 ```
 
-Summary: 
-Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However, the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definite drop in the amount of money spent per purchase as in total sales. During the very hottest periods 40-45 degrees there is also a massive drop in the same fields. However, it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occurred at the 35-40 temperature range. This could be because people drink more alcohol, however, these would be regular temperatures during the summer break time when people are on vacation and are hence drinking more alcohol in general. All in all people tend to buy more alchohol in milder temperatures than in extreme ones. 
+### Summary
+Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However, the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definite drop in the amount of money spent per purchase. During the very hottest periods 40-45 degrees there is also a massive drop in the amount spent on each transaction. However, it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occurred at the 35-40 temperature range. This could be because people drink more alcohol, however, these would be regular temperatures during the summer break time when people are on vacation and are hence drinking more alcohol in general.
 
 ## Research Question 2
 How does rainfall affect the consumer decision when purchasing alcohol?
 
 
 Let´s first see some general information about out the rainfall data in Sydney.
+
 
 ```{r}
 rainData = data %>% drop_na(Rainfall.amount..millimetres.)
@@ -233,10 +382,7 @@ Looking and comparing these two graphs we can see a little trend in alcohol sale
 
 ## Research Question 3
 
-How does the time of year affect the consumer decision when purchasing alcohol?
-
-Other possible research questions: 
-What time of day do people buy their alcohol?
+How does the time of day affect total alcohol sales in relation to the maximum temperature that day?
 
 Insert text and analysis. 
 ```{r}
@@ -267,31 +413,35 @@ ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point() + facet_wr
 #ggplot(testMean, aes(x = timeGroups, y = meanTotal)) + geom_point() + facet_wrap(~tempGroups)
 
 
-
-
-
 ```
 
-
 Summary: 
+The first trend worth noting is that for normal maximum temperature ranges (15-30 degrees) the overall sales over the day seem to follow a bell curve peaking at around 13-14 before dropping off again. For the coldest temperature range the peak is later in the day around 15-16 and for the hottest temperature ranges the peak in sales is earlier. For the maximum temperature of 35-40 degrees there is a very interesting massive spike in sales around noon however since threre is not very much data for this temperature range we cannot draw any conclusions from it. For the more normal temperature ranges, 15-30 degrees, there is also a small but noticable spike in sales in the late afternoon which might stem from people buying alcohol on their way home from work or before dinnner.
 
 <br>
 
 # Conclusions
 
-Insert text.
+TODO:
 
 <br>
 
 # References
 
-Style: APA 
+Australian Bureau of Statistics, 2016, 2016 Census QuickStats, Rosebery. viewed 21/08/2018 http://quickstats.censusdata.abs.gov.au/census_services/getproduct/census/2016/quickstat/SSC13405?opendocument
+
+Friberg, R., & Sanctuary, M. (2017). The effect of retail distribution on sales of alcoholic beverages. Marketing Science, 36(4), 626-641. doi:10.1287/mksc.2017.1038 
+
+Gaukler, G. M. (2010). Preventing avoidable stockouts: The impact of item-level RFID in retail. Journal of Business & Industrial Marketing, 25(8), 572-581. doi:10.1108/08858621011088301 
+
+Kyle B. Murray, Fabrizio Di Muro, Adam Finn, Peter Popkowski Leszczyc, (2010). The effect of weather on consumer spending. Journal of Retailing and Consumer Services (17) 512-520
+
+Weather. (n.d) In Merriam-Websters Collegiate Dictionary. Retrieved from https://www.merriam-webster.com/dictionary/weather
+
+
 
 <br>
 
 # Personal reflection on group work
-
 - The way I contributed was
 - What I learnt about group work was ... 
-
-<br>
