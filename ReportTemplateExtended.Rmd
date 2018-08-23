@@ -1,6 +1,6 @@
 ---
 title: "Reproducible Report Template - Basic"
-author: "Student/s SID Hi Anthony"
+author: "Student/s SID"
 subtitle: "Project 1"
 date: "University of Sydney | Data1001 | August 2018"
 # You can change the title, subtitle, author etc.
