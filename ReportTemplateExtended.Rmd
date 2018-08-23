@@ -1,6 +1,6 @@
 ---
 title: "Reproducible Report Template - Basic"
-author: "Student/s SID"
+author: "Student/s SID Hi Anthony"
 subtitle: "Project 1"
 date: "University of Sydney | Data1001 | August 2018"
 # You can change the title, subtitle, author etc.
@@ -326,7 +326,6 @@ The first trend worth noting is that for normal maximum temperature ranges (15-3
 
 # Conclusions
 
-TODO:
 
 <br>
 
