@@ -32,9 +32,8 @@ output:
 # Executive Summary
 The aim of this report is to enable our client to make better decisions about stocking and marketing his liquor store. The aim of this report was to find out what kind of correlations are between weather and alcohol sales in the liquor store. We used the business's sales data over the past 12 months collected using POS software along with teamperature and rainfall data from the Bureau of Meteorology to determine how weather effects sales so the client can use weather predictions to inform the products he stocks and markets. We chose to look at the effect temperature and rainfall have on sales as well as how temperature effects sales throughout the day. 
 
+
 The datasets were not clean and required alot of wrangling to clean. We had to strip columns, tokenize columns and perform type conversaions as well as append datasets both vertically and horizontally.
-
-
 
 <br>
 
@@ -121,10 +120,10 @@ Each variable is classified at the beginning of the research question.
 
 ## Stakeholders
 ### Customer - Indirect External Stakeholder
-The owner of The Drink Hive, Mal Higgs is a customer. He will receive this report and be able to act on its recommendations. Mal has over 40 years experience in retail liquor and therefore has a strong intuition and has made his own hypotheses/predictions as to the outcome. He came to us as he does not have a mathematical nor statistical background and his Point Of Sale (POS) software does not help with his marketing campaign. Mal is a useful resource for questions about retail and the customer however we must take care not to be bias and assess the data objectively. We must also present the report in a way that a non-technical person can understand.
+The owner of The Drink Hive, Mal Higgs is the customer. He will receive this report and be able to act on its recommendations. Mal has over 40 years experience in retail liquor and therefore has a strong intuition and has made his own hypotheses/predictions as to the outcome. He came to us as he does not have a mathematical nor statistical background and his Point Of Sale (POS) software does not help with his marketing campaign. Mal is a useful resource for questions about retail and the customer however we must take care not to be bias and assess the data objectively. We must also present the report in a way that a non-technical person can understand.
 
 ### Project Team - Direct Internal Stakeholder
-The project tea is made up of Anthony, Science Major, Sindi, Ivan and Sam who are Computer Science majors. We have decided to break up the team into their strenghts and backgrounds whilst also cross-checking each other to ensure that every member of the team learns and we can challenge each others thinking. Each member of the project team will be working on the research questions presented as well as focusing on the below areas of the report.
+The project team is made up of Anthony, Science Major, Sindi, Ivar and Sam who are Computer Science majors. We have decided to break up the team into their strenghts and backgrounds whilst also cross-checking each other to ensure that every member of the team learns and we can challenge each others thinking. Each member of the project team will be working on the research questions presented as well as focusing on the below areas of the report.
 
 Sam has a background in business and data analytics. He will focus on the Initial Data Analysis. He must be aware of the limitations of his understanding of data science to ensure the relevant variables are used. 
 Anthony has a strong critical thinking mind and a background in scientific literature. He will focus on the evidence based conclusions, compilation and presentation of the report. He must be must be aware of his non-technical audience to present the findings in a way that can be understood by a small business owner.
@@ -150,7 +149,7 @@ We displayed this data using a bar graph to represent the average sale value in 
 We acknowledge that the limited number of transactions can skew the accuracy of the data in these ranges.
 
 ### Classification of Variables
-The below table contains a meta-analysis of temperature in our dataset. The temperature is represented by the maximum temperature of that day in degrees celcius.
+The below table contains a meta-analysis of temperature in our dataset. The temperature is ordinal qualitative data represented by the maximum temperature of that day in degrees celcius. Sales is a quantitative variable.
 
 
 ```{r}
