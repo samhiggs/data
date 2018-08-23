@@ -327,22 +327,14 @@ Looking at the data for the total money earned per day for the shop for the diff
 ## Research Question 2
 How does rainfall affect the consumer decision when purchasing alcohol?
 
-There are a few days for which we do not have rain data so we start by removing those rows. We then take a better look at the rain data Let's start by taking a better look at the rainfall data
+
+Let´s first see some general information about out the rainfall data in Sydney.
+
+
 ```{r}
 rainData = data %>% drop_na(Rainfall.amount..millimetres.)
 rain = rainData$Rainfall.amount..millimetres.
 
-dataFrame <- data.frame(Rows = c(nrow(data)-nrow(rainData)),
-                        Max = c(max(rain)),
-                        Min = c(min(rain)),
-                        Mean = c(mean(rain)),
-                        Median = c(median(rain)))
-
-kable(dataFrame, caption = "Fuck yeah", col.names = c("Missing rows", "Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
-
-```
-
-```{r}
 #We start by changing the rainfall from a quantitative variable to a qualitative one
 rainData$rainGroups = cut(rain, c(0,0.1,15,70), include.lowest = TRUE)
 
@@ -352,20 +344,30 @@ medPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, data, median)
 transactions = merge(x = meanPerPerson, y = medPerPerson, by='rainData$rainGroups')
 names(transactions) = c('Rainfall', 'Mean_total', 'Median_total')
 
-FreRain <- as.data.frame(table(rainData$rainGroups))
-colnames(FreRain)[1] <- "rainGroups" 
 
+dataFrame <- data.frame(Rows = c(nrow(data)-nrow(rainData)),
+                        Max = c(max(rain)),
+                        Min = c(min(rain)),
+                        Mean = c(mean(rain)),
+                        Median = c(median(rain)))
 
+kable(dataFrame, col.names = c("Missing rows", "Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
+
+#Number of transactions for each rainfall range
+ ggplot(rainData, aes(rainGroups)) + geom_bar() + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Number of transactions") + xlab("Rainfall") + theme_bw() + ggtitle("Number of total transaction for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+We decided to split up our raindata into 3 categories, No rain, light rain (0 - 15 mm) and heavy rain (15 - 70 mm) because as we can see from the bar plot we have alot more of datapoints for no rain and light rain than heavy rain. So instead of making many categories for different rainfall we only made three for the most accurate results. We can also see from the table above there are few missing rows. That can be explained by bad or missing values. 
+
+Lets start at looking at how much a person spends in the store on average. As we can see from this bar plot there is not much of a difference between these categories but some difference though. People tend to spend a little bit more per purchase as the rainfall increases. 
+```{r}
 #Barplot for average money spent with median lines
-ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = FreRain$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain'))
+ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + scale_x_discrete(labels = c('No rain','Light rain', 'heavy rain'))
+```
 
-
- #Number of transactions for each rainfall range
- ggplot(rainData, aes(rainGroups)) + geom_bar() + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Number of transactions") + xlab("Rainfall") + theme_bw() + ggtitle("Number of total transaction for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
- 
- FreRain
- 
- 
+Lets look at what an average day looks like in total sales for rainfall in Sydney. This bar plot does not tell us the same story as the previous one. We can see that the store sells more alcohol if there is light rain as we saw above but when there is raining heavily the store sells less alcohol. 
+```{r}
  #Total money spent for each temperature range
  totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
  nrOfDaysPerRain = aggregate(rainData$Date ~ rainData$rainGroups, rainData, function(x) length(unique(x)))
@@ -373,16 +375,11 @@ ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", posi
  names(rainTotals) = c('Rainfall', 'Total', 'NrOfDays')
  rainTotals['meanPerDay'] = round(rainTotals$Total / rainTotals$NrOfDays, 1)
  
- ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','small rain', 'heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different temperature") + theme(plot.title = element_text(hjust = 0.5))
-
+  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','Small rain', 'Heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
-### Summary 
--	There many more transactions on days that are not raining can be attributed to the fact that there are many more sunny days in Sydney than rainy days
--	People buy a little bit more when it rains.
--	The average money spent per transaction only rises slightly when there is any rain. 
--	This may be because the store is located in a shopping centre. Maybe this would be different for stores that aren't in a shopping centre.
-
+Summary: 
+Looking and comparing these two graphs we can see a little trend in alcohol sales. When there are days of light rain people tend to spend more per transaction and the store sells more per day compared to days with no rain at all. We think that it might be because of when there is sunshine outside and good weather people are more likely to drink alcohol in a bar but when it is a day with light rain people are more likely to the shop to buy their alcohol. Another reason for this might be that on light rainy days people tend to do more grocery shopping and since the alcohol store is in a shopping centre it's convenient for people to go also to the alcohol shop. However, if we take a look at days when it rains heavily people tend to spend more per transaction, but the store sells less per day. We think that might be because it rains so heavily that not many people go outside so less people go to the alcohol store but if people go outside they tend to buy more per transaction. In conclusion people buy more per transaction when it rains but the store only generates more revenue when there are days with light rain than days with heavy rain or no rain at all. 
 
 
 ## Research Question 3
