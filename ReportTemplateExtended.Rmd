@@ -1,6 +1,6 @@
 ---
 title: "Reproducible Report Template - Basic"
-author: "Student/s SID Hi Anthony"
+author: "Sam Higgs | 4404 5555 8, Anthony Simmon | 480383930, Ivar Orn Kristjansson | 480539753"
 subtitle: "Project 1"
 date: "University of Sydney | Data1001 | August 2018"
 # You can change the title, subtitle, author etc.
@@ -30,14 +30,9 @@ output:
 <br>
 
 # Executive Summary
-- The aim of this report is to find out what kind of correlations are between weather and alcohol sales in Sydney.
-- The main discoveries are ...
+The aim of this report is to enable our client to make better decisions about stocking and marketing his liquor store. The aim of this report was to find out what kind of correlations are between weather and alcohol sales in the liquor store. We used the business's sales data over the past 12 months collected using POS software along with teamperature and rainfall data from the Bureau of Meteorology to determine how weather effects sales so the client can use weather predictions to inform the products he stocks and markets. We chose to look at the effect temperature and rainfall have on sales as well as how temperature effects sales throughout the day. 
 
-where did we get the data and how
-about the datasets, what it is doing and what we did with it
-conclusions 
-And then final conclusions
-max 400 words
+The datasets were not clean and required alot of wrangling to clean. We had to strip columns, tokenize columns and perform type conversaions as well as append datasets both vertically and horizontally.
 
 
 
