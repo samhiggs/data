@@ -1,10 +1,6 @@
 ---
 title: "Reproducible Report Template - Basic"
-<<<<<<< HEAD
-author: "Student/s SID"
-=======
 author: "Sam Higgs | 4404 5555 8, Anthony Simmon | 480383930, Ivar Orn Kristjansson | 480539753"
->>>>>>> e986b59d07473bb2795680e41ed9d49b05cbb9d3
 subtitle: "Project 1"
 date: "University of Sydney | Data1001 | August 2018"
 # You can change the title, subtitle, author etc.
