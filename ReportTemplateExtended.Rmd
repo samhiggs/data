@@ -87,6 +87,7 @@ library(ggplot2)
 library(tidyr)
 library(xtable)
 library(knitr)
+library(dplyr)
 data = read.csv("data/ProcessedData.csv")
 #Looking for data that is greater or equal to 1 dollar to remove any outlying sales
 data <- data[data$Total >= 1,]
@@ -202,7 +203,9 @@ colnames(Fre)[1] <- "tempGroups"
 Fre$lab <- as.character(Fre$Freq)
 
 #Barplot for average money spent with median lines
-ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average sale by temperature") + ylab("Dollars (AUD)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+
+ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average sale by temperature") + ylab("Sales (AUD)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+
 
 ```
 
@@ -217,7 +220,8 @@ The below graph looks at the Total daily sales in different temperature ranges. 
  names(totals) = c('Temperature', 'Total', 'NrOfDays')
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
  
- ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average Daily Sales by Temperature") + ylab("Dollars") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+ ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average Daily Sales by Temperature") + ylab("Sales (AUD)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+
  
 ```
 
@@ -252,7 +256,7 @@ dataFrame <- data.frame(Rows = c(nrow(data)-nrow(rainData)),
 kable(dataFrame, col.names = c("Missing rows", "Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
 
 #Number of transactions for each rainfall range
- ggplot(rainData, aes(rainGroups)) + geom_bar() + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Number of transactions") + xlab("Rainfall") + theme_bw() + ggtitle("Number of total transaction for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
+ ggplot(rainData, aes(rainGroups)) + geom_bar(fill = "#228B22") + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Number of transactions") + xlab("Rainfall") + theme_bw() + ggtitle("Number of total transaction for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
 
 ```
 
@@ -261,19 +265,19 @@ We decided to split up our raindata into 3 categories, No rain, light rain (0 - 
 Lets start at looking at how much a person spends in the store on average. As we can see from this bar plot there is not much of a difference between these categories but some difference though. People tend to spend a little bit more per purchase as the rainfall increases. 
 ```{r}
 #Barplot for average money spent with median lines
-ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in dollars) per purchase for different rainfall") + ylab("Dollars") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + scale_x_discrete(labels = c('No rain','Light rain', 'heavy rain'))
+ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in AUD) per purchase for different rainfall") + ylab("Sales (AUD)") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + scale_x_discrete(labels = c('No rain','Light rain', 'heavy rain'))
 ```
 
 Lets look at what an average day looks like in total sales for rainfall in Sydney. This bar plot does not tell us the same story as the previous one. We can see that the store sells more alcohol if there is light rain as we saw above but when there is raining heavily the store sells less alcohol. 
 ```{r}
- #Total money spent for each temperature range
+ #Total money spent for each rainfall range
  totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
  nrOfDaysPerRain = aggregate(rainData$Date ~ rainData$rainGroups, rainData, function(x) length(unique(x)))
  rainTotals = merge(x = totalPerDay, y = nrOfDaysPerRain, by='rainData$rainGroups')
  names(rainTotals) = c('Rainfall', 'Total', 'NrOfDays')
  rainTotals['meanPerDay'] = round(rainTotals$Total / rainTotals$NrOfDays, 1)
  
-  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + scale_x_discrete(labels = c('No rain','Small rain', 'Heavy rain')) + ylab("Dollars") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (dollars) in one day for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
+  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + scale_x_discrete(labels = c('No rain','Small rain', 'Heavy rain')) + ylab("Sales (AUD)") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (AUD) in one day for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
 Summary: 
@@ -289,7 +293,6 @@ data$timeGroups = cut(hour, seq(8,20,1))
 #table(data$timeGroups)
 
 #Total money made per time gap
-library(dplyr)
 timeTemp = data %>%
     group_by(timeGroups, tempGroups) %>% 
     summarize(total = sum(Total) ) 
@@ -297,8 +300,11 @@ timeTemp = data %>%
 names(nrOfDaysPerTemp) = c('tempGroups', 'nrOfDays')
 timeTemp = merge(x= timeTemp, y=nrOfDaysPerTemp , on='tempGroups')
 timeTemp['scaledTotal'] = timeTemp$total / timeTemp$nrOfDays
-ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point() + geom_line(aes(group=tempGroups))
-ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point() + facet_wrap(~tempGroups)
+
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=tempGroups)) + geom_line(aes(color=tempGroups, group=tempGroups)) + scale_x_discrete(labels = c('8','9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19' , '20')) + ylab("Sales (AUD)") + xlab("Time of the day") + theme_bw() + ggtitle("Alcohol sales for different time of the day in relation to different temperature") + theme(plot.title = element_text(hjust = 0.5), legend.title=element_blank()) + scale_color_hue(labels = c("10 - 15", "15 - 20", "20 - 25", "25 - 30", "30 - 35", "35 - 40", "40 - 45"))
+
+
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=tempGroups)) + facet_wrap(~tempGroups) + geom_line(aes(color=tempGroups, group=tempGroups)) + scale_x_discrete(labels = c('8','9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19' , '20')) + ylab("Sales (AUD)") + xlab("Time of the day") + theme_bw() + ggtitle("Alcohol sales for different time of the day in relation to different temperature") + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
 
 
 #ggplot(test, aes(x = timeGroups, y = total)) + geom_point() + geom_line(aes(group=tempGroups))
