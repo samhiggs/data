@@ -189,6 +189,7 @@ kable(newdf, caption= "Variable Data Classification", col.names = c("Name"," Mis
 
 ### Graphs
 we can see from the below bar graph that people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe a spike at the 35-40 degrees temperature range suggesting that people tend to spend more money per transaction when the temperature is between 35 and 40 degrees.
+
 ```{r}
 #Transaction sizes for each temperature range
 meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
@@ -279,11 +280,9 @@ Summary:
 Looking and comparing these two graphs we can see a little trend in alcohol sales. When there are days of light rain people tend to spend more per transaction and the store sells more per day compared to days with no rain at all. We think that it might be because of when there is sunshine outside and good weather people are more likely to drink alcohol in a bar but when it is a day with light rain people are more likely to the shop to buy their alcohol. Another reason for this might be that on light rainy days people tend to do more grocery shopping and since the alcohol store is in a shopping centre it's convenient for people to go also to the alcohol shop. However, if we take a look at days when it rains heavily people tend to spend more per transaction, but the store sells less per day. We think that might be because it rains so heavily that not many people go outside so less people go to the alcohol store but if people go outside they tend to buy more per transaction. In conclusion people buy more per transaction when it rains but the store only generates more revenue when there are days with light rain than days with heavy rain or no rain at all. 
 
 
-## Research Question 3
+## RQ3 How does maximum temperature effect alcohol sales throughout the day?
+### Classification of Variables
 
-How does the time of day affect total alcohol sales in relation to the maximum temperature that day?
-
-Insert text and analysis. 
 ```{r}
 hour = as.integer(substr(data$Time, 0, 2))
 data$timeGroups = cut(hour, seq(8,20,1))
