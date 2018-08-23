@@ -153,7 +153,7 @@ Complexity of data:
 
 How does the maximum temperature affect the consumer decision when purcahsing alcohol?
 
-Let?s first see some general information about out heat variables.
+Let us first see some general information about out heat variables.
 
 ```{r}
 #The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
@@ -172,7 +172,7 @@ dataFrame <- data.frame(Rows = c(nrow(data)-nrow(heatData)),
 kable(dataFrame, col.names = c("Missing rows", "Max heat", "Min heat", "Mean maximum heat", "Median of maximum heat"))
 ```
 
-Lets start at looking at how much a person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represents the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe some sort of spike in the bar chart. People tend to spend more money when the temperature is between 35 and 40 degrees.
+Lets start at looking at how much a person spends in the store on average. The number we see inside each bar represents the number of transactions for that temperature category and the line in each bar represents the median of money spent. As we can see from the chart, people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe a spike at the 35-40 degrees temperature range suggesting that people tend to spend more money per transaction when the temperature is between 35 and 40 degrees.
 ```{r}
 #Transaction sizes for each temperature range
 meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
@@ -189,7 +189,7 @@ ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(
 
 ```
 
-Lets look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn?t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
+Let us look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn't sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees. 
 
 ```{r}
  
@@ -205,7 +205,9 @@ Lets look at what an average day looks like in total sales for each temperature 
 ```
 
 ### Summary
-Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in consumer behaviour over the temperature ranges 15-35 degrees. However, the more extreme temperature values have more of an effect. During the coldest times (10-15 degrees) there is a definite drop in the amount of money spent per purchase. During the very hottest periods 40-45 degrees there is also a massive drop in the amount spent on each transaction. However, it is worth noting that there were very few transactions during that time. Another very interesting spike in sales occurred at the 35-40 temperature range. This could be because people drink more alcohol, however, these would be regular temperatures during the summer break time when people are on vacation and are hence drinking more alcohol in general.
+Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in the size of each transaction for the temperature ranges 15-30 degrees. The more extreme temperature values have more of an effect showing big drops in transaction sizes, however, it is worth noting that there were very few transactions during that time so the data might not be accurately represent the consumer behaviour. The most noticable spike in transaction sizes occurs at the 35-40 degree temperature range. This could represented by people buying more alcohol at a time during the hot days of summer breaks when going travelling or having barbecues.
+
+Looking at the data for the total money earned per day for the shop for the different temperature ranges we note that there is a steady increase in sales the hotter it gets from 20-40 degrees. It is also worth noting that even though each transacton is comparatively small for the 30-35 temperature range the total sales are high suggesting that for the hotter temperature people buy less at a time but more people buy alcohol. 
 
 ## Research Question 2
 How does rainfall affect the consumer decision when purchasing alcohol?
