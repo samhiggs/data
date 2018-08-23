@@ -57,7 +57,7 @@ The suburb has a diverse mix of cultures with Chinese and Greek ancestory heavil
 
 ### Data Wrangling
 The below script, written by Sindri, was used to clean and combine the two datasets. The files were only available in monthly increments so they were appended with any duplicate sales. The temperature and rainfall data was then joined with the sales data and it was exported in csv form.
-```{python eval = false}
+```{python, eval = FALSE, python.reticulate = FALSE}
 
 # coding: utf-8
 
