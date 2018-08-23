@@ -2,6 +2,9 @@
 title: "Reproducible Report Template - Basic"
 <<<<<<< HEAD
 author: "Student/s SID"
+=======
+author: "Sam Higgs | 4404 5555 8, Anthony Simmon | 480383930, Ivar Orn Kristjansson | 480539753"
+>>>>>>> e986b59d07473bb2795680e41ed9d49b05cbb9d3
 subtitle: "Project 1"
 date: "University of Sydney | Data1001 | August 2018"
 # You can change the title, subtitle, author etc.
@@ -31,6 +34,9 @@ output:
 <br>
 
 # Executive Summary
+The aim of this report is to enable our client to make better decisions about stocking and marketing his liquor store. The aim of this report was to find out what kind of correlations are between weather and alcohol sales in the liquor store. We used the business's sales data over the past 12 months collected using POS software along with teamperature and rainfall data from the Bureau of Meteorology to determine how weather effects sales so the client can use weather predictions to inform the products he stocks and markets. We chose to look at the effect temperature and rainfall have on sales as well as how temperature effects sales throughout the day. 
+
+The datasets were not clean and required alot of wrangling to clean. We had to strip columns, tokenize columns and perform type conversaions as well as append datasets both vertically and horizontally.
 
 
 
@@ -182,8 +188,7 @@ kable(newdf, caption= "Variable Data Classification", col.names = c("Name"," Mis
 ```
 
 ### Graphs
-we can see from the below bar graph that people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe a spike at the 35-40 degrees temperature range suggesting that people tend to spend more money per transaction when the temperature is between 35 and 40 degrees.
-
+We can see from the below bar graph that people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe a spike at the 35-40 degrees temperature range suggesting that people tend to spend more money per transaction when the temperature is between 35 and 40 degrees.
 ```{r}
 #Transaction sizes for each temperature range
 meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
@@ -202,7 +207,7 @@ ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(
 
 ```
 
-The below graph looks at the Total daily sales in different temperature ranges. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn't sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees. 
+The below graph looks at the total daily sales in different temperature ranges. We again see similar trends as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn’t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
 
 ```{r}
  
@@ -219,9 +224,10 @@ The below graph looks at the Total daily sales in different temperature ranges. 
 ```
 
 ### Summary
-Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in the size of each transaction for the temperature ranges 15-30 degrees. The more extreme temperature values have more of an effect showing big drops in transaction sizes, however, it is worth noting that there were very few transactions during that time so the data might not be accurately represent the consumer behaviour. The most noticable spike in transaction sizes occurs at the 35-40 degree temperature range. This could represented by people buying more alcohol at a time during the hot days of summer breaks when going travelling or having barbecues.
+Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in the size of each transaction for the temperature ranges 15-30 degrees. The more extreme temperature values have more of an effect showing big drops in transaction sizes, however, it is worth noting that there were very few transactions during that time so the data might not accurately represent the consumer behaviour. The most noticeable spike in transaction sizes occurs at the 35-40 degree temperature range. This could be represented by people buying more alcohol at a time during the hot days of summer breaks when going travelling or having barbecues.
 
-Looking at the data for the total money earned per day for the shop for the different temperature ranges we note that there is a steady increase in sales the hotter it gets from 20-40 degrees. It is also worth noting that even though each transacton is comparatively small for the 30-35 temperature range the total sales are high suggesting that for the hotter temperature people buy less at a time but more people buy alcohol. 
+Looking at the data for the total money earned per day for the shop for the different temperature ranges we note that there is a steady increase in sales the hotter it gets from 20-40 degrees. It is also worth noting that even though each transaction is comparatively small for the 30-35 temperature range the total sales are high suggesting that for the hotter temperature people buy less at a time but more people buy alcohol.
+
 
 ## RQ2 How does rainfall affect Sales?
 
@@ -253,15 +259,15 @@ kable(dataFrame, col.names = c("Missing rows", "Max rainfall", "Min rainfall", "
 
 ```
 
-We decided to split up our raindata into 3 categories, No rain, light rain (0 - 15 mm) and heavy rain (15 - 70 mm) because as we can see from the bar plot we have alot more of datapoints for no rain and light rain than heavy rain. So instead of making many categories for different rainfall we only made three for the most accurate results. We can also see from the table above there are few missing rows. That can be explained by bad or missing values. 
+We decided to split up our rain data into 3 categories, no rain, light rain (0 - 15 mm) and heavy rain (15 - 70 mm) because as we can see from the bar plot we have a lot more of data points for no rain and light rain than heavy rain. So instead of making many categories for different rainfall we only made three for the most accurate results. We can also see from the table above there are a few missing rows. That can be explained by bad or missing values.
 
-Lets start at looking at how much a person spends in the store on average. As we can see from this bar plot there is not much of a difference between these categories but some difference though. People tend to spend a little bit more per purchase as the rainfall increases. 
+Let's start by looking at how much a person spends in the store on average. As we can see from this bar plot there is little difference between these categories. People tend to spend a small amount more per purchase as the rainfall increases.
 ```{r}
 #Barplot for average money spent with median lines
 ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in AUD) per purchase for different rainfall") + ylab("Sales (AUD)") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + scale_x_discrete(labels = c('No rain','Light rain', 'heavy rain'))
 ```
 
-Lets look at what an average day looks like in total sales for rainfall in Sydney. This bar plot does not tell us the same story as the previous one. We can see that the store sells more alcohol if there is light rain as we saw above but when there is raining heavily the store sells less alcohol. 
+Let's look at what an average day looks like in total sales for rainfall in Sydney. This bar plot doesn’t tell us the same story as the previous one. It is observable that the store has sold more alcohol when there has been light rain as we saw above but when it is raining heavily the store has sold less alcohol.
 ```{r}
  #Total money spent for each rainfall range
  totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
@@ -274,7 +280,7 @@ Lets look at what an average day looks like in total sales for rainfall in Sydne
 ```
 
 Summary: 
-Looking and comparing these two graphs we can see a little trend in alcohol sales. When there are days of light rain people tend to spend more per transaction and the store sells more per day compared to days with no rain at all. We think that it might be because of when there is sunshine outside and good weather people are more likely to drink alcohol in a bar but when it is a day with light rain people are more likely to the shop to buy their alcohol. Another reason for this might be that on light rainy days people tend to do more grocery shopping and since the alcohol store is in a shopping centre it's convenient for people to go also to the alcohol shop. However, if we take a look at days when it rains heavily people tend to spend more per transaction, but the store sells less per day. We think that might be because it rains so heavily that not many people go outside so less people go to the alcohol store but if people go outside they tend to buy more per transaction. In conclusion people buy more per transaction when it rains but the store only generates more revenue when there are days with light rain than days with heavy rain or no rain at all. 
+When comparing these two graphs it becomes evident that there is a little trend in alcohol sales. When there have been days of light rain people have spent more per transaction and the store has sold more per day compared to days with no rain at all. We think that it might be because of when there is sunshine outside and good weather people are more likely to drink alcohol in a bar but when it is a day with light rain people are more likely to the shop to buy their alcohol. Another reason for this might be that on light rainy days people tend to do more grocery shopping and since the alcohol store is in a shopping centre it’s convenient for people to go also to the alcohol shop. However, if we take a look at days when it rains heavily people tend to spend more per transaction, but the store sells less per day. We think that might be because it rains so heavily that not many people go outside so fewer people go to the alcohol store but if people go outside they tend to buy more per transaction. In conclusion, people buy more per transaction when it rains but the store only generates more revenue when there are days with light rain rather than days with heavy rain or no rain at all.
 
 
 ## RQ3 How does maximum temperature effect alcohol sales throughout the day?
@@ -313,7 +319,7 @@ ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=te
 ```
 
 Summary: 
-The first trend worth noting is that for normal maximum temperature ranges (15-30 degrees) the overall sales over the day seem to follow a bell curve peaking at around 13-14 before dropping off again. For the coldest temperature range the peak is later in the day around 15-16 and for the hottest temperature ranges the peak in sales is earlier. For the maximum temperature of 35-40 degrees there is a very interesting massive spike in sales around noon however since threre is not very much data for this temperature range we cannot draw any conclusions from it. For the more normal temperature ranges, 15-30 degrees, there is also a small but noticable spike in sales in the late afternoon which might stem from people buying alcohol on their way home from work or before dinnner.
+The first trend worth noting is that for normal maximum temperature ranges (15-30 degrees) the overall sales over the day seem to follow a bell curve peaking at around 13-14 before dropping off again. For the coldest temperature range the peak is later in the day around 15-16 and for the hottest temperature ranges the peak in sales is earlier. For the maximum temperature of 35-40 degrees there is a very interesting massive spike in sales around noon however since there is not very much data for this temperature range we cannot draw any conclusions from it. For the more normal temperature ranges, 15-30 degrees, there is also a small but noticeable spike in sales in the late afternoon which might stem from people buying alcohol on their way home from work or before dinner.
 
 <br>
 
