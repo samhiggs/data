@@ -1,5 +1,6 @@
 ---
 title: "Reproducible Report Template - Basic"
+<<<<<<< HEAD
 author: "Student/s SID"
 subtitle: "Project 1"
 date: "University of Sydney | Data1001 | August 2018"
@@ -30,14 +31,6 @@ output:
 <br>
 
 # Executive Summary
-- The aim of this report is to find out what kind of correlations are between weather and alcohol sales in Sydney.
-- The main discoveries are ...
-
-where did we get the data and how
-about the datasets, what it is doing and what we did with it
-conclusions 
-And then final conclusions
-max 400 words
 
 
 
