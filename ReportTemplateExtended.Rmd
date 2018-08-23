@@ -328,7 +328,7 @@ Looking at the data for the total money earned per day for the shop for the diff
 How does rainfall affect the consumer decision when purchasing alcohol?
 
 
-Let´s first see some general information about out the rainfall data in Sydney.
+Let's first see some general information about out the rainfall data in Sydney.
 
 
 ```{r}
