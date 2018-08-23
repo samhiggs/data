@@ -153,7 +153,7 @@ Complexity of data:
 
 How does the maximum temperature affect the consumer decision when purcahsing alcohol?
 
-Let´s first see some general information about out heat variables.
+Let?s first see some general information about out heat variables.
 
 ```{r}
 #The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
@@ -189,7 +189,7 @@ ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(
 
 ```
 
-Lets look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn´t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
+Lets look at what an average day looks like in total sales for each temperature range. We again see similar trend as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn?t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
 
 ```{r}
  
@@ -270,10 +270,7 @@ Summary:
 
 ## Research Question 3
 
-How does the time of year affect the consumer decision when purchasing alcohol?
-
-Other possible research questions: 
-What time of day do people buy their alcohol?
+How does the time of day affect total alcohol sales in relation to the maximum temperature that day?
 
 Insert text and analysis. 
 ```{r}
@@ -308,6 +305,8 @@ ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point() + facet_wr
 
 
 Summary: 
+The first trend worth noting is that for normal maximum temperature ranges (15-30 degrees) the overall sales over the day seem to follow a bell curve peaking at around 13-14 before dropping off again. For the coldest temperature range the peak is later in the day around 15-16 and for the hottest temperature ranges the peak in sales is earlier. For the maximum temperature of 35-40 degrees there is a very interesting massive spike in sales around noon however since threre is not very much data for this temperature range we cannot draw any conclusions from it. For the more normal temperature ranges, 15-30 degrees, there is also a small but noticable spike in sales in the late afternoon which might stem from people buying alcohol on their way home from work or before dinnner.
+
 
 <br>
 
