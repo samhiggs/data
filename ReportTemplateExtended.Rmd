@@ -195,7 +195,7 @@ Fre$lab <- as.character(Fre$Freq)
 
 #Barplot for average money spent with median lines
 
-ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average sale by temperature") + ylab("Sales (AUD)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average sale by temperature") + ylab("Sales (AUD)") + xlab("Temperature (Degrees Celcius)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
 
 
 ```
@@ -211,7 +211,7 @@ The below graph looks at the total daily sales in different temperature ranges. 
  names(totals) = c('Temperature', 'Total', 'NrOfDays')
  totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
  
- ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average Daily Sales by Temperature") + ylab("Sales (AUD)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+ ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average Daily Sales by Temperature") + ylab("Sales (AUD)") + xlab("Temperature (Degrees Celcius)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
 
  
 ```
@@ -225,6 +225,7 @@ Looking at the data for the total money earned per day for the shop for the diff
 ## RQ2: How does rainfall affect Sales?
 
 ### Classification of Variables
+We used Weather data measured in millimetres gathered from the Bureau of Meteorology.
 ```{r}
 rainData = data %>% drop_na(Rainfall.amount..millimetres.)
 rain = rainData$Rainfall.amount..millimetres.
@@ -239,16 +240,18 @@ transactions = merge(x = meanPerPerson, y = medPerPerson, by='rainData$rainGroup
 names(transactions) = c('Rainfall', 'Mean_total', 'Median_total')
 
 
-dataFrame <- data.frame(Rows = c(nrow(data)-nrow(rainData)),
+dataFrame <- data.frame(Name = "Rainfall Data",
+                        Rows = c(nrow(data)-nrow(rainData)),
+                        Class = c(class(rain)),
                         Max = c(max(rain)),
                         Min = c(min(rain)),
                         Mean = c(mean(rain)),
                         Median = c(median(rain)))
 
-kable(dataFrame, col.names = c("Missing rows", "Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
+kable(dataFrame, caption="Variable data classification", col.names = c("Name", "Missing rows", "Type","Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
 
 #Number of transactions for each rainfall range
- ggplot(rainData, aes(rainGroups)) + geom_bar(fill = "#228B22") + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Number of transactions") + xlab("Rainfall") + theme_bw() + ggtitle("Number of total transaction for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
+ ggplot(rainData, aes(rainGroups)) + geom_bar(fill = "#228B22") + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Sales(Number of Transactions)") + xlab("Rainfall (millimetres)") + theme_bw() + ggtitle("Number of Sales by Rainfall") + theme(plot.title = element_text(hjust = 0.5))
 
 ```
 
@@ -257,7 +260,7 @@ We decided to split up our rain data into 3 categories, no rain, light rain (0 -
 Let's start by looking at how much a person spends in the store on average. As we can see from this bar plot there is little difference between these categories. People tend to spend a small amount more per purchase as the rainfall increases.
 ```{r}
 #Barplot for average money spent with median lines
-ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average money spent (in AUD) per purchase for different rainfall") + ylab("Sales (AUD)") + xlab("Rainfall") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + scale_x_discrete(labels = c('No rain','Light rain', 'heavy rain'))
+ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average Sale (in AUD) by rainfall") + ylab("Sales (AUD)") + xlab("Rainfall (Millimetres)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + scale_x_discrete(labels = c('No rain','Light rain', 'heavy rain'))
 ```
 
 Let's look at what an average day looks like in total sales for rainfall in Sydney. This bar plot doesn’t tell us the same story as the previous one. It is observable that the store has sold more alcohol when there has been light rain as we saw above but when it is raining heavily the store has sold less alcohol.
@@ -269,7 +272,7 @@ Let's look at what an average day looks like in total sales for rainfall in Sydn
  names(rainTotals) = c('Rainfall', 'Total', 'NrOfDays')
  rainTotals['meanPerDay'] = round(rainTotals$Total / rainTotals$NrOfDays, 1)
  
-  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Sales (AUD)") + xlab("Rainfall") + theme_bw() + ggtitle("Average money spent (AUD) in one day for different rainfall") + theme(plot.title = element_text(hjust = 0.5))
+  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Sales (AUD)") + xlab("Rainfall (Millimetres)") + theme_bw() + ggtitle("Average Daily Sale (AUD) by rainfall") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
 Summary: 
@@ -277,7 +280,6 @@ When comparing these two graphs it becomes evident that there is a little trend 
 
 
 ## RQ3: How does maximum temperature effect alcohol sales throughout the day?
-### Classification of Variables
 
 ```{r}
 hour = as.integer(substr(data$Time, 0, 2))
@@ -293,10 +295,10 @@ names(nrOfDaysPerTemp) = c('tempGroups', 'nrOfDays')
 timeTemp = merge(x= timeTemp, y=nrOfDaysPerTemp , on='tempGroups')
 timeTemp['scaledTotal'] = timeTemp$total / timeTemp$nrOfDays
 
-ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=tempGroups)) + geom_line(aes(color=tempGroups, group=tempGroups)) + scale_x_discrete(labels = c('8','9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19' , '20')) + ylab("Sales (AUD)") + xlab("Time of the day") + theme_bw() + ggtitle("Alcohol sales for different time of the day in relation to different temperature") + theme(plot.title = element_text(hjust = 0.5), legend.title=element_blank()) + scale_color_hue(labels = c("10 - 15", "15 - 20", "20 - 25", "25 - 30", "30 - 35", "35 - 40", "40 - 45"))
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=tempGroups)) + geom_line(aes(color=tempGroups, group=tempGroups)) + scale_x_discrete(labels = c('8','9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19' , '20')) + ylab("Sales (AUD)") + xlab("Time Of Day (Hours)") + theme_bw() + ggtitle("Alcohol Sales by Hour") + theme(plot.title = element_text(hjust = 0.5), legend.title=element_blank()) + scale_color_hue(labels = c("10 - 15", "15 - 20", "20 - 25", "25 - 30", "30 - 35", "35 - 40", "40 - 45"))
 
 
-ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=tempGroups)) + facet_wrap(~tempGroups) + geom_line(aes(color=tempGroups, group=tempGroups)) + scale_x_discrete(labels = c('8','9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19' , '20')) + ylab("Sales (AUD)") + xlab("Time of the day") + theme_bw() + ggtitle("Alcohol sales for different time of the day in relation to different temperature") + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=tempGroups)) + facet_wrap(~tempGroups) + geom_line(aes(color=tempGroups, group=tempGroups)) + scale_x_discrete(labels = c('8','9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19' , '20')) + ylab("Sales (AUD)") + xlab("Time of the day (Hours)") + theme_bw() + ggtitle("Temperature's Effect on Alcohol Sales At Different Times Ff The Day") + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
 
 
 #ggplot(test, aes(x = timeGroups, y = total)) + geom_point() + geom_line(aes(group=tempGroups))
@@ -311,19 +313,28 @@ ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=te
 
 ```
 
-Summary: 
+### Summary
+
 The first trend worth noting is that for normal maximum temperature ranges (15-30 degrees) the overall sales over the day seem to follow a bell curve peaking at around 13-14 before dropping off again. For the coldest temperature range the peak is later in the day around 15-16 and for the hottest temperature ranges the peak in sales is earlier. For the maximum temperature of 35-40 degrees there is a very interesting massive spike in sales around noon however since there is not very much data for this temperature range we cannot draw any conclusions from it. For the more normal temperature ranges, 15-30 degrees, there is also a small but noticeable spike in sales in the late afternoon which might stem from people buying alcohol on their way home from work or before dinner.
 
 <br>
 
-# Conclusions
+# Recommendation
 
-Temperature, rainfall and time of day seem to have noticable effect on sales in a local alcohol store in Sydney.
-Temperature seems to have the most impact on sales of alcoholic drinks. People tend to buy more per purchase and the store sells more in milder temperatures (15 - 14 degrees) than more extreme temperatures (10 - 15 and 40 - 45 degrees). A noticable spike is also seen in both graphs for 35 - 40 degrees. Weather during summer break and holidays is often around that range which could explain the spike. 
-Rainfall does not have as much noticable impact on sales as temperature did. Light rain seems to have more impact than heavy rain and no rain at all on sales of alcoholic drinks. People spend a most per transaction when there is heavy rain but the difference is though not much between the data sets. However, when there is light rain the store sells more on the average day with much more noticable difference. 
-
-
+Our recommendations to the client is to consider looking at weather reports. When light showers are expected, increase marketing and stock of products and when there are extreme temperatures expect to have strong variances in sales throughout the day and less overall sales. The client should avoid overstocking with product during overly cold or hot periods and try to maximise marketing where the weather is expected to be 15-30 degrees celcius.
 <br>
+
+# Conclusion
+
+We conclude that temperature, rainfall and time of day seem to have noticable effect on sales in a local alcohol store in Sydney. It is therefore valuable to look at weather forecasts when deciding what products to stock and promote.
+<br>
+Temperature seems to have the most impact on sales of alcoholic drinks. People tend to spend more and sales volumes increase in milder temperatures (15 - 40 degrees) campared to extreme temperatures (10 - 15 and 40 - 45 degrees). A noticable spike is also seen in average sales by volume and [INSERT] for 35 - 40 degrees. Weather during summer break and holidays is often around that range which could explain the spike. It is also important to note that we had less data to measure due to the irregularity of weather extremes.
+<br>
+Rainfall has a less noticable impact on sales then temperature. Light rain seems to have more impact than heavy rain and no rain at all on sales of alcoholic drinks. People spend more when there is heavy rain but the difference is not significant. When there is light rain the store sells more on the average day when compared to light and heavy rain.
+<br>
+Maximum temperature can also be associated with more variance in sales volume throughout a day. During "normal" temperatures for Sydney (between 15 and 25) we see that there is a consistent gaussian curve however as the temperature gets hotter or colder we see more variance throughout the day with unusual spikes. We must acknowledge that we were unable to control for all variables and external factors may have contributed to these variances but this preliminary report does show that you can expect more consistency in the normal temperature range with a slight increase in sales around 5pm.
+<br>
+
 
 # References
 

@@ -1,0 +1,557 @@
+---
+title: "Reproducible Report Template - Basic"
+author: "Sam Higgs | 4404 5555 8, Anthony Simmon | 480383930, Ivar Orn Kristjansson | 480539753"
+subtitle: "Project 1"
+date: "University of Sydney | Data1001 | August 2018"
+# You can change the title, subtitle, author etc.
+# if you do not want a subtitle, author, or date just delete or comment # the the line!
+output:
+  html_document:
+    fig_caption: yes
+    number_sections: yes
+    self_contained: yes
+    theme: flatly
+    # Other themes can be found at: https://bootswatch.com/
+    css: 
+      - https://use.fontawesome.com/releases/v5.0.6/css/all.css
+    #This will allow you to insert icons in your document, thanks to [Font Awesome](http://fontawesome.io).
+    #You will find an examples below.
+    # If you are knitting your document but not connected to the internet, place a "#" in front of the css line above with the font-awesome.min.css line to comment it out. This will let you knit the document in draft form until you connect again and knit the final. Note that when you do this some elements will be missing from the knitted slides. 
+    toc: true
+    #This adds a Table of Contents (toc).
+    toc_depth: 3
+    #This controls the number of subheadings included in the toc.
+    toc_float: true
+    #This allows toc to update relative to your location as you scroll down the html page.
+    code_folding: hide
+    #code_folding can be changed to "hide"" if you want the all your code to be collapsed when you 
+---
+
+<br>
+
+# Executive Summary
+The aim of this report is to enable our client to make better decisions about stocking and marketing his liquor store. The aim of this report was to find out what kind of correlations are between weather and alcohol sales in the liquor store. We used the business's sales data over the past 12 months collected using POS software along with teamperature and rainfall data from the Bureau of Meteorology to determine how weather effects sales so the client can use weather predictions to inform the products he stocks and markets. We chose to look at the effect temperature and rainfall have on sales as well as how temperature effects sales throughout the day. 
+
+The datasets were not clean and required alot of wrangling to clean. We had to strip columns, tokenize columns and perform type conversaions as well as append datasets both vertically and horizontally.
+
+
+
+<br>
+
+# Initial Data Analysis (IDA)
+## Source of Data
+This report combines sales data from an off-premise liquor store and weather data from the Bureau of Meteorology. 
+The liquor store is called The Drink Hive (http://www.thedrinkhive.com.au/). It is located in a small up-market shopping centre called Saporium in Rosebery, NSW Australia. The sales data is primary data source pulled straight from the POS software Vend (https://www.vendhq.com/). It quantitatively measures time of sale, number of items sold and price whilst also measuring categories such as staff-member and product type. This allows us to objective measurements assuming that all transactions have been processed (which we have been assured have). We acknowledge that this is a small sample and does not necessarily represent the trends of the Australian consumer. The limitation of this data is that it only reflects one store and the trends of customers to that store. 
+
+The second dataset is weather data obtained from from the Bureau of Meteorology (BOM) (http://www.bom.gov.au/climate/data/) website. We chose BOM as they provide the most accurate and detailed quantitative measure of temperature per day available in Australia. This secondary data is openly available on their website. They are the primary source of this data and we trust that this data is accurate. Possible issues we may have with this data include temperature variations within one day. Because transactions occur at different periods throughout a day, and there are often fluctuations in temperature throughout a day, it may alter the results.
+
+
+### Rosebery Demographic
+Rosebery has a population of approximately 10,000 with a median age of 33 and 2,500 families. The median weekly income is $1,900 and weekly rent is $580. 34% of residents have a university or tertiary education which is twice that of NSW average and 67% work full-time. 58% of the population live in flats or apartments.
+The suburb has a diverse mix of cultures with Chinese and Greek ancestory heavily over-represented compared to the NSW Average. 63% of the population's parents were both born overseas, just under double the NSW average. Eastern orthodox over-represented and Anglican under-represented.(ABS, 2016)
+
+### Data Wrangling
+The below script, written by Sindri, was used to clean and combine the two datasets. The files were only available in monthly increments so they were appended with any duplicate sales. The temperature and rainfall data was then joined with the sales data and it was exported in csv form.
+
+```r
+cat(readLines('ProcessData.py'), sep='\n')
+```
+
+```
+
+# coding: utf-8
+import pandas as pd
+
+# The path to all the sales data files
+salesFiles = ['sales_39832.csv',
+'sales_73522.csv',
+'sales_40067.csv',
+'sales_50466.csv',
+'sales_74172.csv',
+'sales_88136.csv',
+'sales_90146.csv',
+'sales_51323.csv',
+'sales_43914.csv',
+'sales_15816.csv',
+'sales_32359.csv',
+'sales_31902.csv',
+'sales_29597.csv']
+
+# Joining up the sales data into one file
+Sales = pd.DataFrame()
+count = 0
+for filename in salesFiles:
+    name = 'data/' + filename
+    temp = pd.read_csv(name)
+    count += len(temp)
+    Sales = Sales.append(temp, ignore_index = True)
+
+# Saving the sales combined sales file if we need it later
+Sales.to_csv('data/TotalSales.csv')
+
+# Splitting the time and date up into two columns to merge the Date column with the weather data
+Sales['Time'] = Sales['Date'].apply(lambda x: x[11:])
+Sales['Date'] = Sales['Date'].apply(lambda x: x[0:10])
+
+# Joining up the temperature datasets from 2017 and 2018
+temperature = pd.read_csv('data/2017_tmp_data.csv')
+temp = pd.read_csv('data/2018_tmp_data.csv')
+temperature = temperature.append(temp, ignore_index = True)
+
+# Joining up the rainfall datasets from 2017 to 2018
+rainfall = pd.read_csv('data/Rainfall_2017.csv')
+temp = pd.read_csv('data/Rainfall_2018.csv')
+rainfall = rainfall.append(temp, ignore_index = True)
+
+# Combining the datasets on rainfall and temperature
+weather = temperature.merge(rainfall, on=['Year', 'Month', 'Day'])[['Year', 'Month', 'Day', 'Maximum temperature (Degree C)', 'Rainfall amount (millimetres)']]
+
+# The weather data had 3 columns for 'Year', 'Month' and 'Day' 
+# so they were joined into one column 'Date'
+weather['Date'] = (weather['Year'].map(str) + '-' 
+                   + weather['Month'].apply(lambda x: str(x).zfill(2)) + '-' 
+                   + weather['Day'].apply(lambda x: str(x).zfill(2)))
+
+# Joining up the weather data with the sales data
+total = pd.merge(Sales.drop(['Customer Name', 'Customer Code', 'Note', 'Discount', 'AccountCodeSale', 'AccountCodePurchase', 'Register', 'User', 'Status', 'Sku', 'Line Type', 'Loyalty', 'Quantity', 'Subtotal', 'Sales Tax', 'Paid'], axis=1)
+                , weather.drop(['Year', 'Month', 'Day'], axis=1)
+                , on='Date'
+                , how = 'inner')
+
+# Each transaction had multiple rows, one for each item, one for the total, 
+# one for any discount and an extra row if the payment was made by credit card.
+# Also there were many duplicates. This cleans all this up into a single row
+# retaining the total price.
+idx = total.groupby(['Receipt Number'])['Total'].transform(max) == total['Total']
+simplified = total[idx].drop_duplicates(subset = ['Date', 'Receipt Number', 'Total', 'Time'])
+
+# Save the processed data
+simplified.to_csv('data/ProcessedData.csv')
+```
+
+## Domain Knowledge
+This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. Researchers looking at Swedens distribution of SKU's determined that it was assortment of products impacts sales (Friberg & Sanctuary, 2017). It is therefore imperative that alcohol retailers
+1. Stock the correct product
+2. Market the correct product
+3. Price their products effectively
+
+In the past, these decisions have been the intuition of a good business operator, however with the accessibility of data and analytics tools, we can now take a more scientific approach which can be replicated by any business.
+
+There is a wealth of evidence which shows that weather influences consumer behaviour and understanding this leads to better marketing decisions (Murray et al., 2010). The key areas of consumer behaviour this report will address are what conditions weather effects consumer spending and what conditions effect consumer behaviour. 
+
+Weather is defined by Merriam Webster as <i>the state of the atmosphere with respect to heat or cold, wetness or dryness, calm or storm, clearness or cloudiness.</i> Researchers indicate that weather alters the shoppers mood which in turn influences their purchasing behaviour (Gaukler, 2010). They deduced that
+1. Bad weather keeps people at home reducing foot traffic and sales
+2. Weather can influence store traffic and sales volume, and
+3. Weather can influence sales by affecting the customers internal state.
+
+We will use this report to show small businesses how they can use their data to increase profitability by making informed decisions about stocking, marketing and pricing their products, helping them find the signal in the noise.
+
+
+
+```r
+#This prevents strings from being factorised which keeps Date as Date
+options(stringsAsFactors = FALSE)
+# LOAD DATA
+library(ggplot2)
+library(tidyr)
+library(xtable)
+library(knitr)
+```
+
+```
+## Warning: package 'knitr' was built under R version 3.3.3
+```
+
+```r
+library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
+data = read.csv("data/ProcessedData.csv")
+#Looking for data that is greater or equal to 1 dollar to remove any outlying sales
+data <- data[data$Total >= 1,]
+head(data$Date)
+```
+
+```
+## [1] "2018-08-06" "2018-08-06" "2018-08-06" "2018-08-06" "2018-08-06"
+## [6] "2018-08-06"
+```
+
+```r
+#Convert date to date format
+# convert date column to date type and format to Australian date standards
+data$Date <- format(as.Date(data$Date), "%d-%m-%Y")
+
+# view R class of data
+class(data$DATE)
+```
+
+```
+## [1] "NULL"
+```
+
+```r
+## [1] "Date"
+
+# view results
+head(data$DATE)
+```
+
+```
+## NULL
+```
+
+```r
+## [1] "2013-08-21" "2013-08-26" "2013-08-27" "2013-09-01" "2013-09-09"
+## [6] "2013-09-10"
+# Quick look at top 6 rows of data
+head(data)
+```
+
+```
+##    X       Date Receipt.Number Total
+## 1  0 06-08-2018          18179 27.00
+## 2  4 06-08-2018          18178 24.00
+## 3  7 06-08-2018          18177 47.00
+## 4 11 06-08-2018          18176 27.00
+## 5 16 06-08-2018          18175 31.05
+## 6 21 06-08-2018          18174 33.99
+##                                                                                    Details
+## 1                                                                         1 X Cirillo Rose
+## 2                                                     2 X Fever Tree Elderflower Tonic 4pk
+## 3        2 X Ps40 Smoked Lemonade + 1 X Athletes of Wine Vino Athletico Macedon Pinot noir
+## 4 1 X Empty Wine Bottle 750ml + 1 X Unico Zelo Harvest Sauvignon Blanc KEG + -1 X Discount
+## 5          3 X Frenchies Kolsch 330ml + 3 X Frenchies Comet Pale Ale 330ml + -1 X Discount
+## 6                                                1 X Domaine Thomson - Explorer Pinot Noir
+##       Time Maximum.temperature..Degree.C. Rainfall.amount..millimetres.
+## 1 18:42:40                             19                             0
+## 2 18:03:54                             19                             0
+## 3 17:45:58                             19                             0
+## 4 17:32:56                             19                             0
+## 5 16:26:31                             19                             0
+## 6 15:05:09                             19                             0
+```
+
+```r
+## Size of data
+dim(data)
+```
+
+```
+## [1] 11853     8
+```
+
+```r
+## R's classification of data
+class(data)
+```
+
+```
+## [1] "data.frame"
+```
+
+```r
+## R's classification of variables
+str(data$Total)
+```
+
+```
+##  num [1:11853] 27 24 47 27 31.1 ...
+```
+## Classification of Variables
+The dataset contains 11853 sales.
+We are representing the population using a small sample described above.
+We have removed columns that are not relevant to our clients use. We are using a multivariant dataset that consists of 8 variables.
+<br>
+X, Date, Receipt.Number, Total, Details, Time, Maximum.temperature..Degree.C., Rainfall.amount..millimetres.
+<br>
+Each variable is classified at the beginning of the research question.
+
+## Stakeholders
+### Customer - Indirect External Stakeholder
+
+### Project Team - Direct Internal Stakeholder
+
+Sam has a background in business and data analytics. He will focus on the Initial Data Analysis. He must be aware of the limitations of his understanding of data science to ensure the relevant variables are used. 
+Anthony has a strong critical thinking mind and a background in scientific literature. He will focus on the evidence based conclusions, compilation and presentation of the report. He must be aware of his non-technical audience to present the findings in a way that can be understood by a small business owner.
+Sindri and Ivar have backgrounds in Computer Science. They will be combining and wrangling the datasets into a useable table and lead the data representations found in this report. They will be ensuring the numerical and graphical summaries are insightful and relevant. They must ensure the correct data points and graphical representations are used to portray the questions being researched.
+
+We have a fantastic breadth of knowledge that will make this report a valuable and useful tool for Mal and other small business retail owners.
+
+### Sponsor - Primary & Secondary Stakeholder
+Our tutor and the University of Sydney are our primary and Secondary stakeholder. They assist in our vision and are responsible for the overall success of the project. They will review our submission and have created specific outcomes that we will be measured against. We must be careful to meet the requirements for this stakeholder or they will fail us and we will not be able to continue to report and continue working. 
+
+## Summary
+
+# Research Questions
+<br>
+
+## RQ1: How does the maximum temperature effect transaction value?
+
+### Introduction
+The amount spent per transaction is a useful indicator for retailers to determine how much stock to buy. If a retailer purchases to much stock, they may not have the cash flow to pay it back, to little and customers will not be able to buy the products they want. 
+
+We displayed this data using a bar graph to represent the average sale value in each temperature range. The value Inside each bar is the number of transactions. As you can see, the lower and upper temperature ranges have less transactions because there are less days. 
+
+We acknowledge that the limited number of transactions can skew the accuracy of the data in these ranges.
+
+### Classification of Variables
+
+
+
+```r
+#The temperature is a quantitative variable. We start by changing it to a qualitative one using ranges that cover 5 degrees Celcius
+temp = data$Maximum.temperature..Degree.C.
+data$tempGroups = cut(temp, c(10,15,20,25,30,35,40,45))
+#Take a look at overall data before looking at the graphs
+heatData = data %>% drop_na(Maximum.temperature..Degree.C.)
+
+dataFrame <- data.frame(Name = "Daily Max Temp",
+                        Rows = c(nrow(data)-nrow(heatData)),
+                        Class = c(class(temp)),
+                        Min = c(min(temp)),
+                        Max = c(max(temp)),
+                        Mean = c(mean(temp)),
+                        Median = c(median(temp)))
+
+#Do the same for the sales data
+sales = data$Total
+salesData = data %>% drop_na(Total)
+salesFrame <- data.frame(Name = "Sales",
+                         Rows = c(nrow(data) - nrow(salesData)),
+                         Class = c(class(temp)),
+                         Min = c(min(sales)),
+                         Max = c(max(sales)),
+                         Mean = c(mean(sales)),
+                         Median = c(median(sales))
+                         )
+newdf <- rbind(dataFrame, salesFrame)
+kable(newdf, caption= "Variable Data Classification", col.names = c("Name"," Missing", "Type", "Minimum", "Maximum", "Mean", "Median"))
+```
+
+
+
+Table: Variable Data Classification
+
+Name               Missing  Type       Minimum   Maximum       Mean   Median
+---------------  ---------  --------  --------  --------  ---------  -------
+Daily Max Temp           0  numeric      14.30      43.4   23.28374     23.2
+Sales                    0  numeric       1.23    1920.0   54.49027     34.0
+
+### Graphs
+We can see from the below bar graph that people seem to spend more money in milder temperature (15 - 40 degrees) but in more extreme temperatures (10 - 15 and 40 - 45 degrees) people tend to buy less alcohol. We can also observe a spike at the 35-40 degrees temperature range suggesting that people tend to spend more money per transaction when the temperature is between 35 and 40 degrees.
+
+```r
+#Transaction sizes for each temperature range
+meanPerPerson = aggregate(data$Total ~ data$tempGroups, data, mean)
+medPerPerson = aggregate(data$Total ~ data$tempGroups, data, median)
+transactions = merge(x = meanPerPerson, y = medPerPerson, by='data$tempGroups')
+names(transactions) = c('Temperature', 'Mean_total', 'Median_total')
+
+Fre <- as.data.frame(table(data$tempGroups))
+colnames(Fre)[1] <- "tempGroups" 
+Fre$lab <- as.character(Fre$Freq)
+
+#Barplot for average money spent with median lines
+
+ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average sale by temperature") + ylab("Sales (AUD)") + xlab("Temperature (Degrees Celcius)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Temperature, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + geom_text(aes(label = Fre$Freq), position = position_dodge(width = 0.9), vjust = 1.5) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+```
+
+<img src="ReportTemplateExtended_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+
+The below graph looks at the total daily sales in different temperature ranges. We again see similar trends as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn’t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
+
+
+```r
+ #Total money spent for each temperature range
+ totalPerDay = aggregate(data$Total ~ data$tempGroups, data, sum)
+ nrOfDaysPerTemp = aggregate(data$Date ~ data$tempGroups, data, function(x) length(unique(x)))
+ totals = merge(x = totalPerDay, y = nrOfDaysPerTemp, by='data$tempGroups')
+ names(totals) = c('Temperature', 'Total', 'NrOfDays')
+ totals['meanPerDay'] = round(totals$Total / totals$NrOfDays, 1)
+ 
+ ggplot(totals, aes(Temperature, meanPerDay)) + geom_bar(stat="identity", position = "dodge") + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + ggtitle("Average Daily Sales by Temperature") + ylab("Sales (AUD)") + xlab("Temperature (Degrees Celcius)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + scale_x_discrete(labels = c('10 - 15','15 - 20','20 - 25', '25 - 30', '30 - 35', '35 - 40', '40 - 45'))
+```
+
+<img src="ReportTemplateExtended_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+
+### Summary
+Looking at the values of the median and mean purchase transactions it becomes evident that there is not much change in the size of each transaction for the temperature ranges 15-30 degrees. The more extreme temperature values have more of an effect showing big drops in transaction sizes, however, it is worth noting that there were very few transactions during that time so the data might not accurately represent the consumer behaviour. The most noticeable spike in transaction sizes occurs at the 35-40 degree temperature range. This could be represented by people buying more alcohol at a time during the hot days of summer breaks when going travelling or having barbecues.
+
+Looking at the data for the total money earned per day for the shop for the different temperature ranges we note that there is a steady increase in sales the hotter it gets from 20-40 degrees. It is also worth noting that even though each transaction is comparatively small for the 30-35 temperature range the total sales are high suggesting that for the hotter temperature people buy less at a time but more people buy alcohol.
+
+
+## RQ2: How does rainfall affect Sales?
+
+### Classification of Variables
+We used Weather data measured in millimetres gathered from the Bureau of Meteorology.
+
+```r
+rainData = data %>% drop_na(Rainfall.amount..millimetres.)
+rain = rainData$Rainfall.amount..millimetres.
+
+#We start by changing the rainfall from a quantitative variable to a qualitative one
+rainData$rainGroups = cut(rain, c(0,0.1,15,70), include.lowest = TRUE)
+
+#Transaction sizes for each temperature range
+meanPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, rainData, mean)
+medPerPerson = aggregate(rainData$Total ~ rainData$rainGroups, data, median)
+transactions = merge(x = meanPerPerson, y = medPerPerson, by='rainData$rainGroups')
+names(transactions) = c('Rainfall', 'Mean_total', 'Median_total')
+
+
+dataFrame <- data.frame(Name = "Rainfall Data",
+                        Rows = c(nrow(data)-nrow(rainData)),
+                        Class = c(class(rain)),
+                        Max = c(max(rain)),
+                        Min = c(min(rain)),
+                        Mean = c(mean(rain)),
+                        Median = c(median(rain)))
+
+kable(dataFrame, caption="Variable data classification", col.names = c("Name", "Missing rows", "Type","Max rainfall", "Min rainfall", "Mean rainfall", "Median of rainfall"))
+```
+
+
+
+Table: Variable data classification
+
+Name             Missing rows  Type       Max rainfall   Min rainfall   Mean rainfall   Median of rainfall
+--------------  -------------  --------  -------------  -------------  --------------  -------------------
+Rainfall Data              74  numeric            69.4              0        1.667816                    0
+
+```r
+#Number of transactions for each rainfall range
+ ggplot(rainData, aes(rainGroups)) + geom_bar(fill = "#228B22") + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Sales(Number of Transactions)") + xlab("Rainfall (millimetres)") + theme_bw() + ggtitle("Number of Sales by Rainfall") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+<img src="ReportTemplateExtended_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+
+We decided to split up our rain data into 3 categories, no rain, light rain (0 - 15 mm) and heavy rain (15 - 70 mm) because as we can see from the bar plot we have a lot more of data points for no rain and light rain than heavy rain. So instead of making many categories for different rainfall we only made three for the most accurate results. We can also see from the table above there are a few missing rows. That can be explained by bad or missing values.
+
+Let's start by looking at how much a person spends in the store on average. As we can see from this bar plot there is little difference between these categories. People tend to spend a small amount more per purchase as the rainfall increases.
+
+```r
+#Barplot for average money spent with median lines
+ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average Sale (in AUD) by rainfall") + ylab("Sales (AUD)") + xlab("Rainfall (Millimetres)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + scale_x_discrete(labels = c('No rain','Light rain', 'heavy rain'))
+```
+
+<img src="ReportTemplateExtended_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+
+Let's look at what an average day looks like in total sales for rainfall in Sydney. This bar plot doesn’t tell us the same story as the previous one. It is observable that the store has sold more alcohol when there has been light rain as we saw above but when it is raining heavily the store has sold less alcohol.
+
+```r
+ #Total money spent for each rainfall range
+ totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
+ nrOfDaysPerRain = aggregate(rainData$Date ~ rainData$rainGroups, rainData, function(x) length(unique(x)))
+ rainTotals = merge(x = totalPerDay, y = nrOfDaysPerRain, by='rainData$rainGroups')
+ names(rainTotals) = c('Rainfall', 'Total', 'NrOfDays')
+ rainTotals['meanPerDay'] = round(rainTotals$Total / rainTotals$NrOfDays, 1)
+ 
+  ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Sales (AUD)") + xlab("Rainfall (Millimetres)") + theme_bw() + ggtitle("Average Daily Sale (AUD) by rainfall") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+<img src="ReportTemplateExtended_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+
+Summary: 
+When comparing these two graphs it becomes evident that there is a little trend in alcohol sales. When there have been days of light rain people have spent more per transaction and the store has sold more per day compared to days with no rain at all. We think that it might be because of when there is sunshine outside and good weather people are more likely to drink alcohol in a bar but when it is a day with light rain people are more likely to the shop to buy their alcohol. Another reason for this might be that on light rainy days people tend to do more grocery shopping and since the alcohol store is in a shopping centre it’s convenient for people to go also to the alcohol shop. However, if we take a look at days when it rains heavily people tend to spend more per transaction, but the store sells less per day. We think that might be because it rains so heavily that not many people go outside so fewer people go to the alcohol store but if people go outside they tend to buy more per transaction. In conclusion, people buy more per transaction when it rains but the store only generates more revenue when there are days with light rain rather than days with heavy rain or no rain at all.
+
+
+## RQ3: How does maximum temperature effect alcohol sales throughout the day?
+
+
+```r
+hour = as.integer(substr(data$Time, 0, 2))
+data$timeGroups = cut(hour, seq(8,20,1))
+#table(data$timeGroups)
+
+#Total money made per time gap
+timeTemp = data %>%
+    group_by(timeGroups, tempGroups) %>% 
+    summarize(total = sum(Total) ) 
+
+names(nrOfDaysPerTemp) = c('tempGroups', 'nrOfDays')
+timeTemp = merge(x= timeTemp, y=nrOfDaysPerTemp , on='tempGroups')
+timeTemp['scaledTotal'] = timeTemp$total / timeTemp$nrOfDays
+
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=tempGroups)) + geom_line(aes(color=tempGroups, group=tempGroups)) + scale_x_discrete(labels = c('8','9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19' , '20')) + ylab("Sales (AUD)") + xlab("Time Of Day (Hours)") + theme_bw() + ggtitle("Alcohol Sales by Hour") + theme(plot.title = element_text(hjust = 0.5), legend.title=element_blank()) + scale_color_hue(labels = c("10 - 15", "15 - 20", "20 - 25", "25 - 30", "30 - 35", "35 - 40", "40 - 45"))
+```
+
+<img src="ReportTemplateExtended_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+
+```r
+ggplot(timeTemp, aes(x = timeGroups, y = scaledTotal)) + geom_point(aes(color=tempGroups)) + facet_wrap(~tempGroups) + geom_line(aes(color=tempGroups, group=tempGroups)) + scale_x_discrete(labels = c('8','9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19' , '20')) + ylab("Sales (AUD)") + xlab("Time of the day (Hours)") + theme_bw() + ggtitle("Temperature's Effect on Alcohol Sales At Different Times Ff The Day") + theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
+```
+
+<img src="ReportTemplateExtended_files/figure-html/unnamed-chunk-9-2.png" width="672" />
+
+```r
+#ggplot(test, aes(x = timeGroups, y = total)) + geom_point() + geom_line(aes(group=tempGroups))
+
+
+#average money spent by customer per transaction, note
+#testMean = data %>%
+#    group_by(timeGroups, tempGroups) %>% 
+#    summarize(meanTotal = mean(Total) ) 
+#ggplot(testMean, aes(x = timeGroups, y = meanTotal)) + geom_point() + facet_wrap(~tempGroups)
+```
+
+### Summary
+
+The first trend worth noting is that for normal maximum temperature ranges (15-30 degrees) the overall sales over the day seem to follow a bell curve peaking at around 13-14 before dropping off again. For the coldest temperature range the peak is later in the day around 15-16 and for the hottest temperature ranges the peak in sales is earlier. For the maximum temperature of 35-40 degrees there is a very interesting massive spike in sales around noon however since there is not very much data for this temperature range we cannot draw any conclusions from it. For the more normal temperature ranges, 15-30 degrees, there is also a small but noticeable spike in sales in the late afternoon which might stem from people buying alcohol on their way home from work or before dinner.
+
+<br>
+
+# Recommendation
+
+Our recommendations to the client is to consider looking at weather reports. When light showers are expected, increase marketing and stock of products and when there are extreme temperatures expect to have strong variances in sales throughout the day and less overall sales. The client should avoid overstocking with product during overly cold or hot periods and try to maximise marketing where the weather is expected to be 15-30 degrees celcius.
+<br>
+
+# Conclusion
+
+We conclude that temperature, rainfall and time of day seem to have noticable effect on sales in a local alcohol store in Sydney. It is therefore valuable to look at weather forecasts when deciding what products to stock and promote.
+<br>
+Temperature seems to have the most impact on sales of alcoholic drinks. People tend to spend more and sales volumes increase in milder temperatures (15 - 40 degrees) campared to extreme temperatures (10 - 15 and 40 - 45 degrees). A noticable spike is also seen in average sales by volume and [INSERT] for 35 - 40 degrees. Weather during summer break and holidays is often around that range which could explain the spike. It is also important to note that we had less data to measure due to the irregularity of weather extremes.
+<br>
+Rainfall has a less noticable impact on sales then temperature. Light rain seems to have more impact than heavy rain and no rain at all on sales of alcoholic drinks. People spend more when there is heavy rain but the difference is not significant. When there is light rain the store sells more on the average day when compared to light and heavy rain.
+<br>
+Maximum temperature can also be associated with more variance in sales volume throughout a day. During "normal" temperatures for Sydney (between 15 and 25) we see that there is a consistent gaussian curve however as the temperature gets hotter or colder we see more variance throughout the day with unusual spikes. We must acknowledge that we were unable to control for all variables and external factors may have contributed to these variances but this preliminary report does show that you can expect more consistency in the normal temperature range with a slight increase in sales around 5pm.
+<br>
+
+
+# References
+
+Australian Bureau of Statistics, 2016, 2016 Census QuickStats, Rosebery. viewed 21/08/2018 http://quickstats.censusdata.abs.gov.au/census_services/getproduct/census/2016/quickstat/SSC13405?opendocument
+
+Friberg, R., & Sanctuary, M. (2017). The effect of retail distribution on sales of alcoholic beverages. Marketing Science, 36(4), 626-641. doi:10.1287/mksc.2017.1038 
+
+Gaukler, G. M. (2010). Preventing avoidable stockouts: The impact of item-level RFID in retail. Journal of Business & Industrial Marketing, 25(8), 572-581. doi:10.1108/08858621011088301 
+
+Kyle B. Murray, Fabrizio Di Muro, Adam Finn, Peter Popkowski Leszczyc, (2010). The effect of weather on consumer spending. Journal of Retailing and Consumer Services (17) 512-520
+
+Weather. (n.d) In Merriam-Websters Collegiate Dictionary. Retrieved from https://www.merriam-webster.com/dictionary/weather
+
+
+
+<br>
+
+# Personal reflection on group work
+- The way I contributed was
+- What I learnt about group work was ... 
