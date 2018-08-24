@@ -30,7 +30,13 @@ output:
 <br>
 
 # Executive Summary
-The aim of this report is to enable our client to make better decisions about stocking and marketing his liquor store. TThis was dne by exploring what kind of correlations there is between weather and alcohol sales in the liquor store. We used the business's sales data over the past 12 months collected using POS software along with temperature and rainfall data from the Bureau of Meteorology to determine how weather effects sales so the client can use weather predictions to inform the products he stocks and markets. We chose to look at the effect temperature and rainfall have on sales as well as how temperature effects sales throughout the day. 
+The aim of this report is to enable our client to make better decisions about stocking and marketing his liquor store. This was done by exploring what kind of correlations there is between weather and alcohol sales in the liquor store. We used the business's sales data over the past 12 months collected using POS software along with temperature and rainfall data from the Bureau of Meteorology to determine how weather effects sales so the client can use weather predictions to inform the products he stocks and markets. We chose to look at the effect temperature and rainfall have on sales as well as how temperature effects sales throughout the day. 
+
+We conclude that temperature, rainfall and time of day seem to have noticable effect on sales. It is therefore valueable to look at weather forecasts when deciding what products to stock and promote. 
+Temperature seems to have the most impact on sales especially during milder temperatures (15 - 40 degrees) rather than more extreme temperature (10 - 15 degrees and 40 - 45 degrees), it is though worth mentioning that the more extreme temperatures have way fewer data points than milder temperatures. 
+Rainfall has less noticable impact on sales. People spend more when there is heavy rain but the difference is not significant. When there is light rain the store sells more on the average day when compared to no rain and heavy rain. It's worth mentioning that heavy rain has the smallest dataset. 
+Maximum temperature can also be associated with more variance in sales volume throughout a day. During "normal" temperatures for Sydney (between 15 and 25) we see that there is a consistent gaussian curve however as the temperature gets hotter or colder we see more variance throughout the day with unusual spikes. 
+
 
 The original datasets were very messy and required alot of wrangling to clean. We had to strip columns, tokenize columns, remove multiple rows with duplicated information and perform type conversaions as well as append datasets both vertically and horizontally.
 
@@ -131,19 +137,26 @@ simplified.to_csv('data/ProcessedData.csv')
 ```
 
 ## Domain Knowledge
-This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. Researchers looking at Swedens distribution of SKU's determined that it was assortment of products impacts sales (Friberg & Sanctuary, 2017). It is therefore imperative that alcohol retailers
-1. Stock the correct product
-2. Market the correct product
-3. Price their products effectively
+This report looks at the effect of weather on alcohol sales in the hope of improving the likelihood of small business success. A business's core role is to provide goods and services. Their success is dependent on their ability to sell products for revenues. Researchers looking at Swedens distribution of SKU's determined that it was assortment of products impacts sales (Friberg & Sanctuary, 2017). It is therefore imperative that alcohol retailers:
+
+- Stock the correct product
+
+- Market the correct product
+
+- Price their products effectively
+
 
 In the past, these decisions have been the intuition of a good business operator, however with the accessibility of data and analytics tools, we can now take a more scientific approach which can be replicated by any business.
 
 There is a wealth of evidence which shows that weather influences consumer behaviour and understanding this leads to better marketing decisions (Murray et al., 2010). The key areas of consumer behaviour this report will address are what conditions weather effects consumer spending and what conditions effect consumer behaviour. 
 
-Weather is defined by Merriam Webster as <i>the state of the atmosphere with respect to heat or cold, wetness or dryness, calm or storm, clearness or cloudiness.</i> Researchers indicate that weather alters the shoppers mood which in turn influences their purchasing behaviour (Gaukler, 2010). They deduced that
-1. Bad weather keeps people at home reducing foot traffic and sales
-2. Weather can influence store traffic and sales volume, and
-3. Weather can influence sales by affecting the customers internal state.
+Weather is defined by Merriam Webster as <i>the state of the atmosphere with respect to heat or cold, wetness or dryness, calm or storm, clearness or cloudiness.</i> Researchers indicate that weather alters the shoppers mood which in turn influences their purchasing behaviour (Gaukler, 2010). They deduced that:
+
+- Bad weather keeps people at home reducing foot traffic and sales
+
+- Weather can influence store traffic and sales volume, and
+
+- Weather can influence sales by affecting the customers internal state.
 
 We will use this report to show small businesses how they can use their data to increase profitability by making informed decisions about stocking, marketing and pricing their products, helping them find the signal in the noise.
 
@@ -160,6 +173,7 @@ library(dplyr)
 data = read.csv("data/ProcessedData.csv")
 #Looking for data that is greater or equal to 1 dollar to remove any outlying sales
 data <- data[data$Total >= 1,]
+data$X = NULL
 
 #Convert date to date format
 # convert date column to date type and format to Australian date standards
@@ -198,7 +212,7 @@ Each variable is classified at the beginning of the research question.
 The owner of The Drink Hive, Mal Higgs is a customer. He will receive this report and be able to act on its recommendations. Mal has over 40 years experience in retail liquor and therefore has a strong intuition and has made his own hypotheses/predictions as to the outcome. He came to us as he does not have a mathematical nor statistical background and his Point Of Sale (POS) software does not help with his marketing campaign. Mal is a useful resource for questions about retail and the customer however we must take care not to be bias and assess the data objectively. We must also present the report in a way that a non-technical person can understand.
 
 ### Project Team - Direct Internal Stakeholder
-The project tea is made up of Anthony, Science Major, Sindi, Ivar and Sam who are Computer Science majors. We have decided to break up the team into their strenghts and backgrounds whilst also cross-checking each other to ensure that every member of the team learns and we can challenge each others thinking. Each member of the project team will be working on the research questions presented as well as focusing on the below areas of the report.
+The project team is made up of Anthony, Science Major, Sindi, Ivar and Sam who are Computer Science majors. We have decided to break up the team into their strenghts and backgrounds whilst also cross-checking each other to ensure that every member of the team learns and we can challenge each others thinking. Each member of the project team will be working on the research questions presented as well as focusing on the below areas of the report.
 
 Sam has a background in business and data analytics. He will focus on the Initial Data Analysis. He must be aware of the limitations of his understanding of data science to ensure the relevant variables are used. 
 Anthony has a strong critical thinking mind and a background in scientific literature. He will focus on the evidence based conclusions, compilation and presentation of the report. He must be aware of his non-technical audience to present the findings in a way that can be understood by a small business owner.
@@ -209,7 +223,6 @@ We have a fantastic breadth of knowledge that will make this report a valuable a
 ### Sponsor - Primary & Secondary Stakeholder
 Our tutor and the University of Sydney are our primary and Secondary stakeholder. They assist in our vision and are responsible for the overall success of the project. They will review our submission and have created specific outcomes that we will be measured against. We must be careful to meet the requirements for this stakeholder or they will fail us and we will not be able to continue to report and continue working. 
 
-## Summary
 
 # Research Questions
 <br>
@@ -219,7 +232,7 @@ Our tutor and the University of Sydney are our primary and Secondary stakeholder
 ### Introduction
 The amount spent per transaction is a useful indicator for retailers to determine how much stock to buy. If a retailer purchases to much stock, they may not have the cash flow to pay it back, to little and customers will not be able to buy the products they want. 
 
-We displayed this data using a bar graph to represent the average sale value in each temperature range. The value Inside each bar is the number of transactions. As you can see, the lower and upper temperature ranges have less transactions because there are less days. 
+We displayed this data using a bar graph to represent the average sale value in each temperature range. The value Inside each bar is the number of transactions. As you can see, the lower and upper temperature ranges have less transactions because there are less days. The line inside each bar represents the median. 
 
 We acknowledge that the limited number of transactions can skew the accuracy of the data in these ranges.
 
@@ -277,7 +290,7 @@ ggplot(transactions, aes(Temperature, Mean_total), label = Fre$Freq) + geom_bar(
 
 ```
 
-The below graph looks at the total daily sales in different temperature ranges. We again see similar trends as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn’t sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
+The below graph looks at the total daily sales in different temperature ranges. We again see similar trends as above. That in extreme temperature (10 - 15 and 40 - 45 degrees) the store doesn't sell as much alcohol as in milder temperatures (15 - 40 degrees). We also see the same spike as above when the temperature is between 35 - 40 degrees.
 
 ```{r}
  
@@ -340,7 +353,7 @@ Let's start by looking at how much a person spends in the store on average. As w
 ggplot(transactions, aes(Rainfall, Mean_total)) + geom_bar(stat="identity", position = "dodge", fill = "#FF6666") + ggtitle("Average Sale (in AUD) by rainfall") + ylab("Sales (AUD)") + xlab("Rainfall (Millimetres)") + theme_bw() + theme(plot.title = element_text(hjust = 0.5)) + geom_errorbar(data=transactions, aes(Rainfall, ymax = Median_total, ymin = Median_total), size=1, linetype = "solid", inherit.aes = F, width = 0.9) + scale_x_discrete(labels = c('No rain','Light rain', 'heavy rain'))
 ```
 
-Let's look at what an average day looks like in total sales for rainfall in Sydney. This bar plot doesn’t tell us the same story as the previous one. It is observable that the store has sold more alcohol when there has been light rain as we saw above but when it is raining heavily the store has sold less alcohol.
+Let's look at what an average day looks like in total sales for rainfall in Sydney. This bar plot doesn't tell us the same story as the previous one. It is observable that the store has sold more alcohol when there has been light rain as we saw above but when it is raining heavily the store has sold less alcohol.
 ```{r}
  #Total money spent for each rainfall range
  totalPerDay = aggregate(rainData$Total ~ rainData$rainGroups, rainData, sum)
@@ -352,8 +365,8 @@ Let's look at what an average day looks like in total sales for rainfall in Sydn
   ggplot(rainTotals, aes(Rainfall, meanPerDay)) + geom_bar(stat="identity", position = "dodge", fill = "#56B4E9") + scale_x_discrete(labels = c('No rain','Light rain', 'Heavy rain')) + ylab("Sales (AUD)") + xlab("Rainfall (Millimetres)") + theme_bw() + ggtitle("Average Daily Sale (AUD) by rainfall") + theme(plot.title = element_text(hjust = 0.5))
 ```
 
-Summary: 
-When comparing these two graphs it becomes evident that there is a little trend in alcohol sales. When there have been days of light rain people have spent more per transaction and the store has sold more per day compared to days with no rain at all. We think that it might be because of when there is sunshine outside and good weather people are more likely to drink alcohol in a bar but when it is a day with light rain people are more likely to the shop to buy their alcohol. Another reason for this might be that on light rainy days people tend to do more grocery shopping and since the alcohol store is in a shopping centre it’s convenient for people to go also to the alcohol shop. However, if we take a look at days when it rains heavily people tend to spend more per transaction, but the store sells less per day. We think that might be because it rains so heavily that not many people go outside so fewer people go to the alcohol store but if people go outside they tend to buy more per transaction. In conclusion, people buy more per transaction when it rains but the store only generates more revenue when there are days with light rain rather than days with heavy rain or no rain at all.
+###Summary
+When comparing these two graphs it becomes evident that there is a little trend in alcohol sales. When there have been days of light rain people have spent more per transaction and the store has sold more per day compared to days with no rain at all. We think that it might be because of when there is sunshine outside and good weather people are more likely to drink alcohol in a bar but when it is a day with light rain people are more likely to the shop to buy their alcohol. Another reason for this might be that on light rainy days people tend to do more grocery shopping and since the alcohol store is in a shopping centre it's convenient for people to go also to the alcohol shop. However, if we take a look at days when it rains heavily people tend to spend more per transaction, but the store sells less per day. We think that might be because it rains so heavily that not many people go outside so fewer people go to the alcohol store but if people go outside they tend to buy more per transaction. In conclusion, people buy more per transaction when it rains but the store only generates more revenue when there are days with light rain rather than days with heavy rain or no rain at all.
 
 
 ## RQ3: How does maximum temperature effect alcohol sales throughout the day?
@@ -408,9 +421,9 @@ Rainfall does not have as much noticable impact on sales as temperature did. Lig
 
 We conclude that temperature, rainfall and time of day seem to have noticable effect on sales in a local alcohol store in Sydney. It is therefore valuable to look at weather forecasts when deciding what products to stock and promote.
 <br>
-Temperature seems to have the most impact on sales of alcoholic drinks. People tend to spend more and sales volumes increase in milder temperatures (15 - 40 degrees) campared to extreme temperatures (10 - 15 and 40 - 45 degrees). A noticable spike is also seen in average sales by volume and [INSERT] for 35 - 40 degrees. Weather during summer break and holidays is often around that range which could explain the spike. It is also important to note that we had less data to measure due to the irregularity of weather extremes.
+Temperature seems to have the most impact on sales of alcoholic drinks. People tend to spend more and sales volumes increase in milder temperatures (15 - 40 degrees) compared to extreme temperatures (10 - 15 and 40 - 45 degrees). A noticable spike is also seen in average sales by volume and [INSERT] for 35 - 40 degrees. Weather during summer break and holidays is often around that range which could explain the spike. It is also important to note that we had less data to measure due to the irregularity of weather extremes.
 <br>
-Rainfall has a less noticable impact on sales then temperature. Light rain seems to have more impact than heavy rain and no rain at all on sales of alcoholic drinks. People spend more when there is heavy rain but the difference is not significant. When there is light rain the store sells more on the average day when compared to light and heavy rain.
+Rainfall has a less noticable impact on sales then temperature. Light rain seems to have more impact than heavy rain and no rain at all on sales of alcoholic drinks. People spend more when there is heavy rain but the difference is not significant. When there is light rain the store sells more on the average day when compared to no rain and heavy rain.
 <br>
 Maximum temperature can also be associated with more variance in sales volume throughout a day. During "normal" temperatures for Sydney (between 15 and 25) we see that there is a consistent gaussian curve however as the temperature gets hotter or colder we see more variance throughout the day with unusual spikes. We must acknowledge that we were unable to control for all variables and external factors may have contributed to these variances but this preliminary report does show that you can expect more consistency in the normal temperature range with a slight increase in sales around 5pm.
 <br>
@@ -434,4 +447,5 @@ Weather. (n.d) In Merriam-Websters Collegiate Dictionary. Retrieved from https:/
 
 # Personal reflection on group work
 - The way I contributed was
+
 - What I learnt about group work was ... 
