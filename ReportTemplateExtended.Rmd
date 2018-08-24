@@ -1,6 +1,6 @@
 ---
 title: "Reproducible Report Template - Basic"
-author: "Sam Higgs | 4404 5555 8, Anthony Simmon | 480383930, Ivar Orn Kristjansson | 480539753"
+author: "Sam Higgs | 4404 5555 8, Sindri Ingolfsson | 480318815, Anthony Simmon | 480383930, Ivar Orn Kristjansson | 480539753"
 subtitle: "Project 1"
 date: "University of Sydney | Data1001 | August 2018"
 # You can change the title, subtitle, author etc.
@@ -30,9 +30,9 @@ output:
 <br>
 
 # Executive Summary
-The aim of this report is to enable our client to make better decisions about stocking and marketing his liquor store. The aim of this report was to find out what kind of correlations are between weather and alcohol sales in the liquor store. We used the business's sales data over the past 12 months collected using POS software along with teamperature and rainfall data from the Bureau of Meteorology to determine how weather effects sales so the client can use weather predictions to inform the products he stocks and markets. We chose to look at the effect temperature and rainfall have on sales as well as how temperature effects sales throughout the day. 
+The aim of this report is to enable our client to make better decisions about stocking and marketing his liquor store. TThis was dne by exploring what kind of correlations there is between weather and alcohol sales in the liquor store. We used the business's sales data over the past 12 months collected using POS software along with temperature and rainfall data from the Bureau of Meteorology to determine how weather effects sales so the client can use weather predictions to inform the products he stocks and markets. We chose to look at the effect temperature and rainfall have on sales as well as how temperature effects sales throughout the day. 
 
-The datasets were not clean and required alot of wrangling to clean. We had to strip columns, tokenize columns and perform type conversaions as well as append datasets both vertically and horizontally.
+The original datasets were very messy and required alot of wrangling to clean. We had to strip columns, tokenize columns, remove multiple rows with duplicated information and perform type conversaions as well as append datasets both vertically and horizontally.
 
 
 
@@ -74,7 +74,7 @@ Weather is defined by Merriam Webster as <i>the state of the atmosphere with res
 We will use this report to show small businesses how they can use their data to increase profitability by making informed decisions about stocking, marketing and pricing their products, helping them find the signal in the noise.
 
 
-```{r}
+```{r message=FALSE}
 #This prevents strings from being factorised which keeps Date as Date
 options(stringsAsFactors = FALSE)
 # LOAD DATA
@@ -86,29 +86,29 @@ library(dplyr)
 data = read.csv("data/ProcessedData.csv")
 #Looking for data that is greater or equal to 1 dollar to remove any outlying sales
 data <- data[data$Total >= 1,]
-head(data$Date)
+
 #Convert date to date format
 # convert date column to date type and format to Australian date standards
 data$Date <- format(as.Date(data$Date), "%d-%m-%Y")
 
 # view R class of data
-class(data$DATE)
+#class(data$DATE)
 ## [1] "Date"
 
 # view results
-head(data$DATE)
+#head(data$DATE)
 ## [1] "2013-08-21" "2013-08-26" "2013-08-27" "2013-09-01" "2013-09-09"
 ## [6] "2013-09-10"
 # Quick look at top 6 rows of data
 head(data)
 
 ## Size of data
-dim(data)
+#dim(data)
 
 ## R's classification of data
-class(data)
+#class(data)
 ## R's classification of variables
-str(data$Total)
+#str(data$Total)
 ```
 ## Classification of Variables
 The dataset contains `r nrow(data)` sales.
@@ -255,7 +255,7 @@ kable(dataFrame, caption="Variable data classification", col.names = c("Name", "
 
 ```
 
-We decided to split up our rain data into 3 categories, no rain, light rain (0 - 15 mm) and heavy rain (15 - 70 mm) because as we can see from the bar plot we have a lot more of data points for no rain and light rain than heavy rain. So instead of making many categories for different rainfall we only made three for the most accurate results. We can also see from the table above there are a few missing rows. That can be explained by bad or missing values.
+We decided to split up our rain data into 3 categories, no rain, light rain (0 - 15 mm) and heavy rain (15 - 70 mm) because as we can see from the bar plot we have a lot more of data points for no rain and light rain than heavy rain. So instead of making many categories for different rainfall we only made three for the most accurate results. We can also see from the table above there are a few missing rows because our rain data was a little older than our sales data and so a few of the very newest transactions were missing rain data.
 
 Let's start by looking at how much a person spends in the store on average. As we can see from this bar plot there is little difference between these categories. People tend to spend a small amount more per purchase as the rainfall increases.
 ```{r}
@@ -323,6 +323,9 @@ The first trend worth noting is that for normal maximum temperature ranges (15-3
 
 Our recommendations to the client is to consider looking at weather reports. When light showers are expected, increase marketing and stock of products and when there are extreme temperatures expect to have strong variances in sales throughout the day and less overall sales. The client should avoid overstocking with product during overly cold or hot periods and try to maximise marketing where the weather is expected to be 15-30 degrees celcius.
 <br>
+Temperature, rainfall and time of day seem to have noticable effect on sales in a local alcohol store in Sydney.
+Temperature seems to have the most impact on sales of alcoholic drinks. People tend to buy more per purchase and the store sells more in milder temperatures (15 - 40 degrees) than more extreme temperatures (10 - 15 and 40 - 45 degrees). A noticable spike is also seen in both graphs for 35 - 40 degrees. Weather during summer break and holidays is often around that range which could explain the spike. 
+Rainfall does not have as much noticable impact on sales as temperature did. Light rain seems to have more impact than heavy rain and no rain at all on sales of alcoholic drinks. People spend a most per transaction when there is heavy rain but the difference is though not much between the data sets. However, when there is light rain the store sells noticably more on days without rain or with heavy rain.
 
 # Conclusion
 
