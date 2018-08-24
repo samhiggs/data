@@ -1,6 +1,6 @@
 ---
 title: "Reproducible Report Template - Basic"
-author: "Sam Higgs | 4404 5555 8, Sindri Ingolfsson | 4803, Anthony Simmon | 480383930, Ivar Orn Kristjansson | 480539753"
+author: "Sam Higgs | 4404 5555 8, Sindri Ingolfsson | 480318815, Anthony Simmon | 480383930, Ivar Orn Kristjansson | 480539753"
 subtitle: "Project 1"
 date: "University of Sydney | Data1001 | August 2018"
 # You can change the title, subtitle, author etc.
